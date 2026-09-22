@@ -1,0 +1,346 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-geist-mono);
+  --font-heading: var(--font-sans);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+:root {
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+  --chart-1: oklch(0.87 0 0);
+  --chart-2: oklch(0.556 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.371 0 0);
+  --chart-5: oklch(0.269 0 0);
+  --radius: 0.625rem;
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.556 0 0);
+  --chart-1: oklch(0.87 0 0);
+  --chart-2: oklch(0.556 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.371 0 0);
+  --chart-5: oklch(0.269 0 0);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.556 0 0);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
+  }
+}
+/* ---------------------------------------------------------------------------
+   APT — tokens da marca.
+   Sobrescreve o tema neutro do shadcn com a paleta do brand book. O site é
+   escuro por decisão: grafite é a base da marca, e o voo renderizado nasce
+   sobre fundo escuro — fundo claro brigaria com o vídeo.
+   Proporção alvo do brand book: 60% grafite, 30% concreto, 10% laranja.
+--------------------------------------------------------------------------- */
+:root {
+  /* ---------------------------------------------------------------------
+     Paleta medida, não intuída. Contagem de hex em duas referências premium
+     (Linear, Stripe) mostrou três coisas que a versão anterior errava:
+
+     1. A base quase não tem matiz. #16191F era azulado demais e lia como
+        "tema escuro de app", não como superfície cara.
+     2. Existem três degraus de elevação, não um. Fundo chapado é o que fazia
+        a página parecer impressa em cima de um retângulo.
+     3. O acento aparece em dose mínima e dessaturado. Laranja de segurança em
+        saturação cheia lê como canteiro de obra.
+
+     O cobre mantém a matiz da marca e corta o croma: a identidade continua
+     reconhecível, o tom sai de alerta e entra em metal.
+  --------------------------------------------------------------------- */
+  --apt-vazio: #08090a;      /* o mais fundo: rodapé, poços, vinheta */
+  --apt-base: #0d0f12;       /* fundo da página */
+  --apt-sup1: #14171c;       /* superfície elevada */
+  --apt-sup2: #1c2026;       /* elevada de novo: cartão sobre superfície */
+
+  --apt-texto: #e4e6ea;      /* frio, como nas referências */
+  --apt-texto-mudo: #9a9da4;
+
+  --apt-cobre: #c2683f;      /* acento de trabalho — mesma matiz, croma cortado */
+  --apt-cobre-claro: #d98f63;
+  --apt-brasa: #e8541e;      /* só marcador vivo, em área minúscula */
+  --apt-profundo: #16324f;   /* azul de autoridade, para segundo plano */
+  --apt-verde: #2f7a5c;
+
+  /* compatibilidade: o resto do site ainda fala em grafite/laranja/concreto */
+  --apt-grafite: var(--apt-base);
+  --apt-grafite-2: var(--apt-sup1);
+  --apt-laranja: var(--apt-cobre);
+  --apt-concreto: var(--apt-texto);
+
+  --background: var(--apt-base);
+  --foreground: var(--apt-texto);
+  --card: var(--apt-sup1);
+  --card-foreground: var(--apt-texto);
+  --primary: var(--apt-cobre);
+  --primary-foreground: var(--apt-vazio);
+  --secondary: var(--apt-sup1);
+  --secondary-foreground: var(--apt-texto);
+  --muted: var(--apt-sup1);
+  --muted-foreground: var(--apt-texto-mudo);
+  --accent: var(--apt-cobre);
+  --accent-foreground: var(--apt-vazio);
+  --border: rgba(228, 230, 234, 0.10);
+  --input: rgba(228, 230, 234, 0.14);
+  --ring: var(--apt-cobre);
+  --radius: 0px;
+  --apt-fio: rgba(228, 230, 234, 0.11);
+}
+
+@theme inline {
+  /* O bloco do shadcn declara `--font-sans: var(--font-sans)`, que é circular e
+     resolve vazio — sem isto o `font-sans` do Tailwind cai em Times New Roman. */
+  --font-sans: var(--font-plex-sans);
+  --font-heading: var(--font-plex-sans);
+  --color-apt-grafite: var(--apt-grafite);
+  --color-apt-laranja: var(--apt-laranja);
+  --color-apt-concreto: var(--apt-concreto);
+  --color-apt-verde: var(--apt-verde);
+  --font-mono: var(--font-plex-mono);
+}
+
+html { background: var(--apt-base); }
+body {
+  color: var(--apt-texto);
+  /* Vinheta larguíssima: o canto escurece um fio. Fundo absolutamente chapado
+     é o que mais denuncia página montada em template. */
+  background:
+    radial-gradient(120% 80% at 50% 0%, var(--apt-sup1) 0%, var(--apt-base) 55%, var(--apt-vazio) 100%)
+    fixed;
+}
+
+/* Rótulos e números em mono: "medir antes de afirmar" dito em tipografia. */
+.apt-label {
+  font-family: var(--font-plex-mono), ui-monospace, monospace;
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+/* Entrada por scroll em CSS puro: roda fora da main thread, ao contrário de
+   qualquer listener de scroll. Motion cuida do que precisa de estado em JS. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .apt-rise {
+      animation: apt-rise-kf linear both;
+      animation-timeline: view();
+      animation-range: entry 8% cover 34%;
+    }
+  }
+}
+@keyframes apt-rise-kf {
+  from { opacity: 0; transform: translateY(26px); }
+  to   { opacity: 1; transform: none; }
+}
+
+::selection { background: var(--apt-laranja); color: var(--apt-grafite); }
+
+
+/* ---------------------------------------------------------------------------
+   Animação de entrada do hero — CSS puro.
+   Compõe no GPU (opacity + transform), roda sem JavaScript e não depende da
+   hidratação: o título já está no lugar antes do React acordar.
+--------------------------------------------------------------------------- */
+.apt-in {
+  opacity: 0;
+  transform: translateY(18px);
+  animation: apt-in-kf 0.85s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation-delay: var(--d, 0s);
+}
+@keyframes apt-in-kf {
+  to { opacity: 1; transform: none; }
+}
+
+/* A grade decorativa de fundo saiu daqui. O detector do impeccable a marca
+   como `codex-grid-background`: gradiente de fio ladrilhado em célula fixa é
+   assinatura de UI gerada, e eu a tinha posto justamente para o contrário.
+   A classe também já estava morta — o topo virou vídeo. A grade sobrevive
+   apenas dentro da moldura de foto ausente, que é superfície de enquadramento
+   e é o caso que a própria regra isenta. */
+
+@media (prefers-reduced-motion: reduce) {
+  .apt-in {
+    opacity: 1;
+    transform: none;
+    animation: none;
+  }
+}
+
+/* ===========================================================================
+   Correções de caráter — o que separava "template gerado" de coisa desenhada.
+
+   1. Contraste tipográfico: display pesada e larga contra mono estreita.
+   2. Canto reto: raio em tudo é a assinatura do preset. Marca industrial
+      corta reto.
+   3. Grão: superfície lisa e gradiente limpo é o que mais denuncia render
+      sintético. Uma camada de ruído sutil quebra isso.
+   4. Régua no lugar de caixa: fio de 1px separa melhor que borda de card.
+=========================================================================== */
+
+@theme inline {
+  --font-display: var(--font-display);
+}
+
+:root {
+  --radius: 0px;
+  --apt-fio: rgba(233, 230, 225, 0.14);
+}
+
+.apt-display {
+  font-family: var(--font-display), var(--font-plex-sans), system-ui, sans-serif;
+  font-weight: 400;
+  letter-spacing: -0.035em;
+  line-height: 0.92;
+  text-transform: uppercase;
+}
+
+/* Escala fluida com salto grande entre os degraus. Passo curto lê como
+   documento; passo longo lê como cartaz. */
+.apt-d1 { font-size: clamp(3.2rem, 11vw, 11rem); }
+.apt-d2 { font-size: clamp(2.2rem, 6vw, 5rem); }
+.apt-d3 { font-size: clamp(1.5rem, 3vw, 2.4rem); }
+
+/* Grão. Ruído fractal em SVG, gerado inline — nenhum arquivo para baixar.
+   `mix-blend-mode: overlay` deixa a textura reagir ao que está embaixo em vez
+   de cobrir com cinza uniforme. */
+.apt-grao::after {
+  content: "";
+  position: fixed;
+  inset: -50%;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 0.16;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Fio: substitui a borda de card. Um traço horizontal separa sem encaixotar. */
+.apt-fio { border-top: 1px solid var(--apt-fio); }
+
+/* Pressionável responde na hora. Feedback instantâneo é do que o olho sente
+   falta sem saber nomear. */
+.apt-press { transition: transform 160ms ease-out, background-color 200ms ease-out; }
+.apt-press:active { transform: scale(0.975); }
+
+/* Sublinhado que cresce do lado de onde o cursor chega não existe sem JS;
+   este cresce da esquerda e já é muito melhor que `text-decoration`. */
+.apt-link { position: relative; }
+.apt-link::after {
+  content: "";
+  position: absolute;
+  left: 0; bottom: -4px;
+  height: 1px; width: 100%;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.apt-link:hover::after { transform: scaleX(1); }
+
+@media (prefers-reduced-motion: reduce) {
+  .apt-press:active { transform: none; }
+  .apt-link::after { transition: none; }
+}
