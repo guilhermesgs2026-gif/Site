@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { motion, useInView } from "motion/react";
+import { Ambiente } from "@/components/ambiente";
 
 /**
  * Serviços revelados pela rolagem.
@@ -104,7 +105,11 @@ export function Servicos() {
   const [ativo, setAtivo] = useState(0);
 
   return (
-    <section id="servicos" className="border-t border-[var(--apt-fio)]">
+    <section
+      id="servicos"
+      className="relative overflow-hidden border-t border-[var(--apt-fio)]"
+    >
+      <Ambiente canto="esquerda" />
       <div className="mx-auto grid max-w-7xl gap-x-16 px-6 py-24 lg:grid-cols-[minmax(0,20rem)_1fr] sm:py-32">
         {/* Coluna presa: diz onde a pessoa está sem precisar de barra. */}
         <div className="lg:sticky lg:top-32 lg:self-start">

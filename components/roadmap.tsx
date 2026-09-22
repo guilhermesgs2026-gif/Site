@@ -6,6 +6,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { DrawSVGPlugin } from "gsap/DrawSVGPlugin";
 import { MotionPathPlugin } from "gsap/MotionPathPlugin";
 import { useGSAP } from "@gsap/react";
+import { Ambiente } from "@/components/ambiente";
 
 gsap.registerPlugin(ScrollTrigger, DrawSVGPlugin, MotionPathPlugin, useGSAP);
 
@@ -154,8 +155,13 @@ export function Roadmap() {
          cortada pela própria borda da seção em janela baixa — e o corte
          dependia da janela, então passava em teste e falhava na tela do
          cliente. Agora a seção cresce se precisar. */
-      className="relative flex min-h-svh flex-col justify-center border-t border-[var(--apt-fio)] py-24"
+      className="relative flex min-h-svh flex-col justify-center overflow-hidden border-t border-[var(--apt-fio)] py-24"
     >
+      {/* Canto inferior direito: o traçado sobe da base-esquerda para o topo-
+          direita, então é a única área grande que ele não atravessa. Força
+          menor que nas outras seções para não competir com a linha, que aqui
+          é o assunto. */}
+      <Ambiente canto="direita-baixo" forca={0.025} />
       <div className="mx-auto w-full max-w-7xl px-6">
         <p className="apt-label text-[var(--apt-cobre)]">O método</p>
         <h2 className="apt-display apt-d3 mt-4 max-w-2xl">

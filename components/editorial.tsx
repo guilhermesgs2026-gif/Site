@@ -6,6 +6,7 @@ import { Frame } from "@/components/media";
 import { VideoSequencia, PLANOS } from "@/components/video-sequencia";
 import { SLOTS } from "@/components/slots";
 import { AptMark } from "@/components/apt-mark";
+import { Ambiente } from "@/components/ambiente";
 import { Reveal } from "@/components/sections";
 
 /**
@@ -144,8 +145,9 @@ export function Manifesto() {
   const palavras = frase.split(" ");
 
   return (
-    <section className="border-y border-border bg-[var(--apt-grafite-2)]">
-      <div className="mx-auto max-w-7xl px-6 py-28 sm:py-40">
+    <section className="relative overflow-hidden border-y border-border bg-[var(--apt-sup1)]">
+      <Ambiente canto="direita" forca={0.035} />
+      <div className="relative mx-auto max-w-7xl px-6 py-28 sm:py-40">
         <p className="apt-label mb-10 text-[var(--apt-laranja)]">A tese</p>
         {/* Entrada palavra a palavra: o olho lê a frase na ordem em que ela
             aparece, o que dá peso à segunda metade — que é o argumento. */}
@@ -181,8 +183,12 @@ export function Manifesto() {
 /** Bloco de duas colunas: foto alta de um lado, argumento do outro. */
 export function PainelNoChao() {
   return (
-    <section id="no-chao" className="mx-auto max-w-7xl px-6 py-24 sm:py-32">
-      <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,0.85fr)_1fr] lg:gap-20">
+    <section id="no-chao" className="relative overflow-hidden">
+      {/* A foto ocupa a esquerda, então o símbolo entra pela direita, atrás do
+          texto. */}
+      <Ambiente canto="direita" />
+      <div className="relative mx-auto max-w-7xl px-6 py-24 sm:py-32">
+        <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,0.85fr)_1fr] lg:gap-20">
         <Reveal>
           <Frame slot={SLOTS.metodo} className="w-full" />
         </Reveal>
@@ -216,6 +222,7 @@ export function PainelNoChao() {
               ))}
             </dl>
           </Reveal>
+        </div>
         </div>
       </div>
     </section>

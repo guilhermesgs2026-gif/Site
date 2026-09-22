@@ -3,6 +3,7 @@
 import { motion } from "motion/react";
 import type { ReactNode } from "react";
 import { AptMarkStatic } from "@/components/apt-mark";
+import { Ambiente } from "@/components/ambiente";
 
 /**
  * Curva única para tudo que entra. Desaceleração longa lê como coisa pesada
@@ -47,6 +48,7 @@ function Secao({
   intro,
   children,
   tom = "base",
+  ambiente,
 }: {
   id: string;
   rotulo: string;
@@ -54,15 +56,19 @@ function Secao({
   intro?: string;
   children?: ReactNode;
   tom?: "base" | "fundo";
+  /* Seção só de texto recebe a marca gigante cortada ao fundo. O canto varia
+     entre seções para elas não ficarem idênticas. */
+  ambiente?: { canto: "direita" | "esquerda" | "esquerda-baixo" | "direita-baixo"; tom?: "texto" | "cobre" };
 }) {
   return (
     <section
       id={id}
-      className={
-        tom === "fundo" ? "border-y border-border bg-[var(--apt-grafite-2)]" : undefined
-      }
+      className={`relative overflow-hidden ${
+        tom === "fundo" ? "border-y border-border bg-[var(--apt-sup1)]" : ""
+      }`}
     >
-      <div className="mx-auto max-w-6xl px-6 py-24 sm:py-32">
+      {ambiente && <Ambiente canto={ambiente.canto} tom={ambiente.tom} />}
+      <div className="relative mx-auto max-w-6xl px-6 py-24 sm:py-32">
         <Reveal>
           <div className="grid gap-x-16 gap-y-6 md:grid-cols-[minmax(0,14rem)_1fr]">
             <p className="apt-label pt-2 text-[var(--apt-laranja)]">{rotulo}</p>
@@ -164,6 +170,7 @@ export function Filosofia() {
     <Secao
       id="filosofia"
       tom="fundo"
+      ambiente={{ canto: "esquerda-baixo" }}
       rotulo="Filosofia"
       titulo="Cinco princípios que decidem o que a gente aceita fazer."
     >
@@ -211,7 +218,13 @@ const RECUSAS = [
 
 export function Limites() {
   return (
-    <Secao id="limites" tom="fundo" rotulo="Os limites" titulo="O que a APT se recusa a ser.">
+    <Secao
+      id="limites"
+      tom="fundo"
+      ambiente={{ canto: "direita-baixo", tom: "cobre" }}
+      rotulo="Os limites"
+      titulo="O que a APT se recusa a ser."
+    >
       <div className="grid gap-x-12 gap-y-9 sm:grid-cols-2">
         {RECUSAS.map((r, i) => (
           <Reveal key={r.t} delay={i * 0.06}>
@@ -249,6 +262,7 @@ export function Projetos() {
     <Secao
       id="projetos"
       tom="fundo"
+      ambiente={{ canto: "direita" }}
       rotulo="Projetos"
       titulo="Esta página vai contar casos reais — quando houver casos reais."
       intro="Cada caso entra aqui com o cliente, o processo tratado, a medição de antes e depois e o critério de transferência que fechou o projeto. Enquanto não houver, o espaço fica vazio de propósito."

@@ -204,11 +204,15 @@
 html { background: var(--apt-base); }
 body {
   color: var(--apt-texto);
-  /* Vinheta larguíssima: o canto escurece um fio. Fundo absolutamente chapado
-     é o que mais denuncia página montada em template. */
-  background:
-    radial-gradient(120% 80% at 50% 0%, var(--apt-sup1) 0%, var(--apt-base) 55%, var(--apt-vazio) 100%)
-    fixed;
+  /* Cor plana. A vinheta radial que estava aqui usava `background-attachment:
+     fixed`, e com isso o gradiente era pintado em relação à JANELA, não ao
+     documento: cada tela recebia a rampa inteira e terminava em #08090a na
+     borda de baixo. As seções sem fundo próprio mostravam essa ponta quase
+     preta, acompanhando a rolagem.
+     A profundidade não precisa dela: vem dos degraus de elevação entre as
+     seções (--apt-base contra --apt-sup1), que é como as referências medidas
+     resolvem isso. */
+  background: var(--apt-base);
 }
 
 /* Rótulos e números em mono: "medir antes de afirmar" dito em tipografia. */
