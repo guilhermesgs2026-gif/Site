@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { motion, useInView } from "motion/react";
+import { useRef } from "react";
+import { motion } from "motion/react";
+import { useItemAtivo } from "@/components/use-item-ativo";
 import { Ambiente } from "@/components/ambiente";
 
 /**
@@ -47,33 +48,9 @@ const PORTAS = [
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
-function Porta({
-  porta,
-  indice,
-  onAtivo,
-}: {
-  porta: (typeof PORTAS)[number];
-  indice: number;
-  /* Recebe o setter direto do useState, que tem referência estável. Uma arrow
-     criada no pai entraria nova a cada render e o efeito abaixo reexecutaria
-     sem parar. */
-  onAtivo: (i: number) => void;
-}) {
-  const ref = useRef<HTMLElement>(null);
-  /* `amount: 0.55` faz o item virar o ativo só quando ele domina a faixa de
-     leitura, não quando a primeira linha aparece. Sem isso o contador pisca
-     entre dois números durante a rolagem. */
-  const naVista = useInView(ref, { amount: 0.55, margin: "-18% 0px -18% 0px" });
-
-  /* Avisar o pai dentro do render disparava setState durante a renderização.
-     O efeito troca o estado depois da pintura, que é onde isso pertence. */
-  useEffect(() => {
-    if (naVista) onAtivo(indice);
-  }, [naVista, indice, onAtivo]);
-
+function Porta({ porta }: { porta: (typeof PORTAS)[number] }) {
   return (
     <motion.article
-      ref={ref}
       initial={{ opacity: 0, y: 26 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-12% 0px" }}
@@ -102,7 +79,8 @@ function Porta({
 }
 
 export function Servicos() {
-  const [ativo, setAtivo] = useState(0);
+  const lista = useRef<HTMLDivElement>(null);
+  const ativo = useItemAtivo(lista);
 
   return (
     <section
@@ -148,9 +126,9 @@ export function Servicos() {
           </div>
         </div>
 
-        <div className="mt-14 lg:mt-0">
-          {PORTAS.map((porta, i) => (
-            <Porta key={porta.n} porta={porta} indice={i} onAtivo={setAtivo} />
+        <div ref={lista} className="mt-14 lg:mt-0">
+          {PORTAS.map((porta) => (
+            <Porta key={porta.n} porta={porta} />
           ))}
         </div>
       </div>
