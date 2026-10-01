@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { motion, useInView } from "motion/react";
+import { motion } from "motion/react";
 import { Ambiente } from "@/components/ambiente";
 import { AptMarkStatic } from "@/components/apt-mark";
 
@@ -143,25 +143,9 @@ function Janela({ p, className = "" }: { p: Projeto; className?: string }) {
   );
 }
 
-function Item({
-  p,
-  indice,
-  onAtivo,
-}: {
-  p: Projeto;
-  indice: number;
-  onAtivo: (i: number) => void;
-}) {
-  const ref = useRef<HTMLElement>(null);
-  const naVista = useInView(ref, { amount: 0.55, margin: "-18% 0px -18% 0px" });
-
-  useEffect(() => {
-    if (naVista) onAtivo(indice);
-  }, [naVista, indice, onAtivo]);
-
+function Item({ p }: { p: Projeto }) {
   return (
     <motion.article
-      ref={ref}
       initial={{ opacity: 0, y: 26 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-12% 0px" }}
@@ -202,6 +186,35 @@ function Item({
 
 export function Projetos() {
   const [ativo, setAtivo] = useState(0);
+  const lista = useRef<HTMLDivElement>(null);
+
+  /* Ativo = o último item cujo topo já passou de uma linha a 45% da tela.
+     Antes cada item avisava com useInView; itens curtos ficavam visíveis ao
+     mesmo tempo, o último efeito vencia e o contador pulava do 01 para o 03. */
+  useEffect(() => {
+    let quadro = 0;
+    const medir = () => {
+      quadro = 0;
+      const linha = window.innerHeight * 0.45;
+      const itens = lista.current?.children ?? [];
+      let i = 0;
+      for (let k = 0; k < itens.length; k++) {
+        if (itens[k].getBoundingClientRect().top <= linha) i = k;
+      }
+      setAtivo(i);
+    };
+    const agendar = () => {
+      if (!quadro) quadro = requestAnimationFrame(medir);
+    };
+    medir();
+    window.addEventListener("scroll", agendar, { passive: true });
+    window.addEventListener("resize", agendar);
+    return () => {
+      cancelAnimationFrame(quadro);
+      window.removeEventListener("scroll", agendar);
+      window.removeEventListener("resize", agendar);
+    };
+  }, []);
 
   return (
     <section
@@ -252,9 +265,9 @@ export function Projetos() {
           </div>
         </div>
 
-        <div className="mt-14 lg:mt-0">
-          {PROJETOS.map((p, i) => (
-            <Item key={p.n} p={p} indice={i} onAtivo={setAtivo} />
+        <div ref={lista} className="mt-14 lg:mt-0">
+          {PROJETOS.map((p) => (
+            <Item key={p.n} p={p} />
           ))}
         </div>
       </div>
