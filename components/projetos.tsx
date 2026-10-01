@@ -84,6 +84,7 @@ const PROJETOS: Projeto[] = [
     nome: "Upload automático de fichas",
     desc: "Varre as pastas de projeto, acha o link certo na planilha e sobe os arquivos para o OneDrive/SharePoint. No fim, entrega um Excel com o que subiu e o que ficou pendente.",
     area: "Automação · Python",
+    img: "/img/projetos/upload-fichas.jpg",
     onde: "Aplicativo de desktop · Windows",
   },
   {
