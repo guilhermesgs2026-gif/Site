@@ -73,7 +73,7 @@ const PROJETOS: Projeto[] = [
   {
     n: "05",
     nome: "Alocação de equipes",
-    desc: "Distribui as equipes de campo entre as subestações, com acesso por login.",
+    desc: "Monta as equipes de fiscalização por subestação a partir do endereço de cada funcionário. Calcula a distância, marca quem ficaria a mais de 50 km e mostra tudo no mapa, com a rota até a subestação.",
     area: "Campo · Equipes",
     img: "/img/projetos/subestacao.jpg",
     href: "https://subestacao-equipe-app.vercel.app/",
