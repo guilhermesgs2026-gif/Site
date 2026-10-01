@@ -9,11 +9,11 @@ import {
   ContatoEditorial,
 } from "@/components/editorial";
 import { Servicos } from "@/components/servicos";
+import { Projetos } from "@/components/projetos";
 import {
   Cabecalho,
   Filosofia,
   Limites,
-  Projetos,
   Rodape,
 } from "@/components/sections";
 
