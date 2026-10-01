@@ -348,3 +348,38 @@ body {
   .apt-press:active { transform: none; }
   .apt-link::after { transition: none; }
 }
+
+/* ---------------------------------------------------------------------------
+   Tela de carregamento (components/carregamento.tsx), a mesma do RNC Online.
+   Prefixo `ld-` porque `.apt-rise` já é a entrada por scroll acima.
+--------------------------------------------------------------------------- */
+.ld-tela { animation: ld-sai 0.6s ease-in 2.6s forwards; }
+.ld-traco {
+  stroke-dasharray: 1 2;
+  stroke-dashoffset: 1;
+  animation: ld-traco 0.55s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+}
+.ld-traco:nth-child(2) { animation-delay: 0.45s; }
+.ld-traco:nth-child(3) { animation-delay: 0.9s; }
+.ld-sobe {
+  opacity: 0;
+  transform: translateY(0.35em);
+  animation: ld-sobe 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+.ld-barra {
+  transform: scaleX(0);
+  transform-origin: left;
+  animation: ld-barra 1.2s cubic-bezier(0.65, 0, 0.35, 1) 1.2s forwards;
+}
+@keyframes ld-traco { to { stroke-dashoffset: 0; } }
+@keyframes ld-sobe { to { opacity: 1; transform: none; } }
+@keyframes ld-barra { to { transform: scaleX(1); } }
+@keyframes ld-sai { to { opacity: 0; visibility: hidden; } }
+
+/* A entrada do hero espera a tela sair; senão ela toca escondida atrás. */
+@media (prefers-reduced-motion: no-preference) {
+  .apt-in { animation-delay: calc(var(--d, 0s) + 2.8s); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ld-tela { display: none; }
+}

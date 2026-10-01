@@ -257,6 +257,70 @@ export function Limites() {
 
 /* -------------------------------------------------------------------------- */
 
+/* Feitos por nós dentro de uma operação onde trabalhamos. Não são casos de
+   cliente — o texto diz isso, pela mesma regra do bloco "Sobre números". */
+const PROJETOS = [
+  {
+    n: "01",
+    nome: "RNC Online",
+    desc: "Relatório de não conformidade preenchido em campo, com fotos de evidência, classificação de SST e qualidade, e exportação em XLS, PDF ou e-mail.",
+    area: "Qualidade · Segurança do trabalho",
+    href: "https://apt-rnc-online.vercel.app/",
+  },
+  {
+    n: "02",
+    nome: "Painel SGI",
+    desc: "Painel de indicadores do sistema de gestão integrado, com acesso por login para cada equipe.",
+    area: "Gestão · Indicadores",
+    href: "https://dashapt.vercel.app/",
+    restrito: true,
+  },
+  {
+    n: "03",
+    nome: "Gerador de FD",
+    desc: "Monta a ficha de troca de equipamento — o que saiu, o que entrou, dados técnicos e fotos — já com o nome de arquivo no padrão.",
+    area: "Ativos · Subestações",
+    href: "https://gerador-fd.vercel.app/",
+  },
+  {
+    n: "04",
+    nome: "Relatório Semanal de Fiscalização",
+    desc: "Gera o relatório semanal em slides a partir de um formulário. Texto que não cabe vira página de continuação no mesmo padrão.",
+    area: "Fiscalização · Relatórios",
+    href: "https://rsf-sgs.vercel.app/",
+  },
+  {
+    n: "05",
+    nome: "App de equipe de subestação",
+    desc: "Aplicativo da equipe de campo nas subestações, com acesso por login.",
+    area: "Campo · Equipes",
+    href: "https://subestacao-equipe-app.vercel.app/",
+    restrito: true,
+  },
+  {
+    n: "06",
+    nome: "Upload automático de fichas",
+    desc: "Varre as pastas de projeto, acha o link certo na planilha e sobe os arquivos para o OneDrive/SharePoint. No fim, entrega um Excel com o que subiu e o que ficou pendente.",
+    area: "Automação · Python",
+    onde: "Aplicativo de desktop · Windows",
+  },
+  {
+    n: "07",
+    nome: "Slides para vídeo",
+    desc: "Transforma uma apresentação de PowerPoint em vídeo narrado, com vozes em português. Adaptamos uma ferramenta de código aberto e demos a ela uma janela simples de usar.",
+    area: "Treinamento · Python",
+    onde: "Aplicativo de desktop · Windows",
+  },
+  {
+    n: "08",
+    nome: "Controle de hospedagem corporativa",
+    desc: "Cadastro de viajantes e coordenadores, pedidos de reserva com acompanhamento de status, cancelamentos e relatório geral. Importa e exporta planilhas.",
+    area: "Logística · Viagens",
+    href: "/demos/controle-hospedagem.html",
+    demo: true,
+  },
+];
+
 export function Projetos() {
   return (
     <Secao
@@ -264,15 +328,35 @@ export function Projetos() {
       tom="fundo"
       ambiente={{ canto: "direita" }}
       rotulo="Projetos"
-      titulo="Esta página vai contar casos reais — quando houver casos reais."
-      intro="Cada caso entra aqui com o cliente, o processo tratado, a medição de antes e depois e o critério de transferência que fechou o projeto. Enquanto não houver, o espaço fica vazio de propósito."
+      titulo="O que já construímos, rodando de verdade."
+      intro="Ainda não são casos de cliente. São ferramentas que fizemos dentro de uma operação onde trabalhamos e que seguem em uso no dia a dia."
     >
-      <div className="grid gap-4 sm:grid-cols-3">
-        {["Cliente âncora 01", "Cliente âncora 02", "Cliente âncora 03"].map((slot, i) => (
-          <Reveal key={slot} delay={i * 0.07}>
-            <div className="flex h-44 flex-col justify-between border border-dashed border-border p-6">
-              <span className="apt-label text-muted-foreground">{slot}</span>
-              <span className="text-sm text-muted-foreground">Em aberto</span>
+      <div className="grid gap-4 sm:grid-cols-2">
+        {PROJETOS.map((p, i) => (
+          <Reveal key={p.n} delay={i * 0.06}>
+            <div className="group relative flex h-full flex-col justify-between gap-6 border border-border bg-[var(--apt-grafite)] p-6 transition-colors has-[a:hover]:border-[var(--apt-laranja)]">
+              <div>
+                <div className="flex items-baseline justify-between gap-4">
+                  <span className="apt-label text-muted-foreground">{p.n}</span>
+                  <span className="apt-label text-muted-foreground">{p.area}</span>
+                </div>
+                <h3 className="mt-4 text-lg font-semibold">{p.nome}</h3>
+                <p className="mt-2 text-[15px] leading-relaxed text-apt-concreto/75">{p.desc}</p>
+              </div>
+              {p.href ? (
+                /* O ::after estica o link sobre o cartão inteiro. */
+                <a
+                  href={p.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-[var(--apt-laranja)] after:absolute after:inset-0"
+                >
+                  {p.restrito ? "Acesso restrito — ver tela de entrada" : p.demo ? "Abrir demonstração (sem dados)" : "Abrir o aplicativo"}{" "}
+                  <span aria-hidden className="inline-block transition-transform group-has-[a:hover]:translate-x-1">→</span>
+                </a>
+              ) : (
+                <span className="text-sm text-muted-foreground">{p.onde}</span>
+              )}
             </div>
           </Reveal>
         ))}

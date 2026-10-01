@@ -1,0 +1,2217 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controle de Hospedagem Corporativa e Solicitações</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        :root {
+            --primary: #1e3a8a;
+            --primary-hover: #1d4ed8;
+            --secondary: #0d9488;
+            --bg: #f8fafc;
+            --white: #ffffff;
+            --text: #1e293b;
+            --text-light: #64748b;
+            --border: #e2e8f0;
+            --danger: #ef4444;
+            --danger-hover: #dc2626;
+            --warning: #eab308;
+            --success: #10b981;
+            --success-hover: #059669;
+            --accent: #f59e0b;
+        }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            padding: 20px;
+            line-height: 1.5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--border);
+        }
+        header h1 {
+            color: var(--primary);
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+        header p {
+            color: var(--text-light);
+        }
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 10px;
+            flex-wrap: wrap;
+        }
+        .tab {
+            padding: 12px 20px;
+            background: #e2e8f0;
+            cursor: pointer;
+            border-radius: 6px;
+            font-weight: 600;
+            color: var(--text-light);
+            transition: all 0.2s;
+        }
+        .tab.active {
+            background: var(--primary);
+            color: var(--white);
+        }
+        .tab:hover:not(.active) {
+            background: #cbd5e1;
+            color: var(--text);
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .card {
+            background: var(--white);
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            margin-bottom: 25px;
+        }
+        .card h3 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 18px;
+            border-left: 4px solid var(--primary);
+            padding-left: 10px;
+        }
+        .card-header-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .card-header-actions h3 {
+            margin-bottom: 0;
+        }
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+            align-items: flex-end;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            position: relative;
+        }
+        label {
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--text);
+        }
+        input[type="text"], input[type="date"], input[type="color"], input[type="url"], select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 14px;
+            background-color: #f8fafc;
+            transition: border-color 0.2s;
+        }
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            background-color: var(--white);
+        }
+        button {
+            background-color: var(--primary);
+            color: var(--white);
+            border: none;
+            padding: 11px 20px;
+            cursor: pointer;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            transition: background-color 0.2s;
+        }
+        button:hover {
+            background-color: var(--primary-hover);
+        }
+        .btn-danger { background-color: var(--danger); }
+        .btn-danger:hover { background-color: var(--danger-hover); }
+        .btn-success { background-color: var(--success); }
+        .btn-success:hover { background-color: var(--success-hover); }
+        .btn-secondary { background-color: var(--text-light); }
+        .btn-secondary:hover { background-color: #475569; }
+        .btn-warning { background-color: var(--accent); }
+        
+        .note {
+            font-size: 13px;
+            color: var(--text-light);
+            margin-top: 5px;
+        }
+        
+        /* Auto-complete */
+        .search-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid var(--border);
+            border-top: none;
+            border-radius: 0 0 6px 6px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 100;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .search-item {
+            padding: 10px;
+            cursor: pointer;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .search-item:hover {
+            background-color: #f1f5f9;
+        }
+        
+        /* Tabelas */
+        .table-container {
+            overflow-x: auto;
+            margin-top: 15px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 14px;
+        }
+        th, td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+        }
+        th {
+            background-color: #f1f5f9;
+            color: var(--text);
+            font-weight: 600;
+        }
+        tr:hover {
+            background-color: #f8fafc;
+        }
+        
+        .coord-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 1px 1px 1px rgba(0,0,0,0.3);
+        }
+
+        .viajante-tag {
+            font-weight: 600;
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: white;
+            text-shadow: 1px 1px 1px rgba(0,0,0,0.4);
+        }
+
+        .badge-duplicate {
+            background-color: #fee2e2;
+            color: #991b1b;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: bold;
+            border: 1px solid #fca5a5;
+            margin-left: 5px;
+        }
+
+        /* Status de Solicitação */
+        .status-select {
+            padding: 5px 8px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        /* Paginação */
+        .pagination-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+            padding: 10px 5px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .pagination-buttons {
+            display: flex;
+            gap: 5px;
+        }
+        .pagination-btn {
+            background-color: #e2e8f0;
+            color: var(--text);
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-weight: normal;
+        }
+        .pagination-btn:hover {
+            background-color: #cbd5e1;
+        }
+        .pagination-btn.active {
+            background-color: var(--primary);
+            color: white;
+            font-weight: bold;
+        }
+        
+        /* Cancelamentos */
+        .cancel-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        .cancel-solicitado  { background:#fef9c3; color:#a16207; border:1px solid #fde68a; }
+        .cancel-efetivado   { background:#dcfce7; color:#166534; border:1px solid #86efac; }
+        .cancel-nao         { background:#fee2e2; color:#991b1b; border:1px solid #fca5a5; }
+        .cancel-noshow      { background:#f3e8ff; color:#6d28d9; border:1px solid #d8b4fe; }
+
+        .obs-cell { max-width: 220px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background: var(--white);
+            padding: 25px;
+            border-radius: 8px;
+            width: 100%;
+            max-width: 600px;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+        }
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .actions-btn-group button {
+            padding: 5px 10px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>✈️ Controle de Hospedagem Corporativa</h1>
+        <p>Gestão de Hospedagens, Cadastros, Solicitações e Cancelamentos</p>
+    </header>
+
+    <div class="tabs">
+        <div class="tab active" onclick="showTab('cadastros')">1. Cadastros & Viajantes</div>
+        <div class="tab" onclick="showTab('coordenadores')">2. Coordenadores e Gerência</div>
+        <div class="tab" onclick="showTab('viagens')">3. Lançar Hospedagens</div>
+        <div class="tab" onclick="showTab('solicitacaoTab')">4. 📝 Solicitar Hospedagem</div>
+        <div class="tab" onclick="showTab('solicitacoesRecebidasTab')">5. 📑 Painel de Solicitações</div>
+        <div class="tab" onclick="showTab('relatorios')">6. Relatório Geral</div>
+        <div class="tab" onclick="showTab('cancelamentosTab')">7. ❌ Cancelamentos</div>
+    </div>
+
+    <!-- TAB 1: CADASTROS & VIAJANTES -->
+    <div id="cadastros" class="tab-content active">
+        <div class="card">
+            <h3 id="tituloCadastroViajante">Cadastrar Novo Viajante</h3>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="nomeViajante">Nome Completo</label>
+                    <input type="text" id="nomeViajante" placeholder="Ex: João Silva">
+                </div>
+                <div class="form-grid" style="display:contents;">
+                    <div class="form-group">
+                        <label for="regionalSelect">Regional</label>
+                        <select id="regionalSelect" onchange="atualizarCoordenadoresDropdownCadastro()"></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="coordenadorSelect">Coordenador Responsável</label>
+                        <select id="coordenadorSelect">
+                            <option value="">-- Sem coordenador específico --</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group" style="max-width: 220px;">
+                    <div style="display: flex; gap: 5px;">
+                        <button id="btnSalvarViajante" onclick="adicionarViajante()">➕ Cadastrar</button>
+                        <button id="btnCancelarEdicaoViajante" class="btn-secondary" onclick="cancelarEdicaoViajante()" style="display:none;">Cancelar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>Importar Viajantes em Lote (Excel/CSV)</h3>
+            <div class="form-group">
+                <label>Selecione seu arquivo (.xlsx, .xls ou .csv)</label>
+                <input type="file" id="excelFile" accept=".xlsx, .xls, .csv">
+                <p class="note">⚠️ Cabeçalhos obrigatórios na primeira linha: <strong>Nome</strong>, <strong>Regional</strong> e opcionalmente <strong>Coordenador</strong>.</p>
+            </div>
+        </div>
+
+        <!-- NOVO: COMPARADOR E AUDITORIA DE LISTA EXCEL -->
+        <div class="card" style="background-color: #f0f9ff; border: 1px solid #bae6fd;">
+            <h3 style="color: #0369a1; border-left-color: #0284c7;">🔍 Comparar Lista de Nomes (Conferência com Excel)</h3>
+            <p style="font-size:13px; margin-bottom: 12px; color: #0369a1;">Suba uma planilha contendo a lista atualizada de viajantes válidos. Os nomes cadastrados no sistema que <strong>não estiverem</strong> nessa lista serão exibidos para você decidir se deseja excluí-los.</p>
+            <div class="form-group">
+                <input type="file" id="excelConferenciaFile" accept=".xlsx, .xls, .csv">
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header-actions" style="margin-bottom: 10px;">
+                <h3>Lista de Viajantes Cadastrados</h3>
+                <div>
+                    <button onclick="verificarDuplicadosManual()" class="btn-warning" style="margin-right:5px;">⚠️ Filtrar Duplicados</button>
+                    <button onclick="exportarViajantesCSV()" class="btn-secondary">📥 Exportar Base (CSV)</button>
+                </div>
+            </div>
+            
+            <div style="margin-bottom: 15px; background: #f1f5f9; padding: 12px; border-radius: 6px; border: 1px solid var(--border);">
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label for="pesquisaViajanteTabela" style="font-weight: bold; color: var(--primary);">🔍 Localizar Viajante</label>
+                    <input type="text" id="pesquisaViajanteTabela" placeholder="Digite o nome ou regional para filtrar..." oninput="filtrarTabelaViajantes()">
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table id="tabelaViajantes">
+                    <thead>
+                        <tr>
+                            <th>Nome do Viajante</th>
+                            <th>Regional de Origem</th>
+                            <th>Coordenador Atribuído</th>
+                            <th style="width: 150px;">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+            <div class="pagination-container">
+                <span id="infoPaginaViajantes" class="note">Mostrando 0 de 0 viajantes</span>
+                <div id="botoesPaginaViajantes" class="pagination-buttons"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB 2: COORDENADORES E GERÊNCIA -->
+    <div id="coordenadores" class="tab-content">
+        <div class="card" style="background-color: #fffbeb; border: 1px solid #fef3c7;">
+            <div class="card-header-actions">
+                <h3 style="color: #b45309; border-left-color: #d97706;">👑 Definir Gerente Geral</h3>
+                <button onclick="exportarGerenteCSV()" class="btn-secondary" style="color: #b45309; border-color: #fef3c7;">📥 Exportar Gerente (CSV)</button>
+            </div>
+            <div class="form-grid">
+                <div class="form-group" style="grid-column: span 2;">
+                    <label for="nomeGerente">Nome do Gerente Geral</label>
+                    <input type="text" id="nomeGerente" placeholder="Ex: Diretor Executivo ou Nome do Gerente Geral">
+                </div>
+                <div class="form-group">
+                    <button onclick="salvarGerente()" class="btn-success" style="background-color: #d97706;">💾 Salvar Gerente</button>
+                </div>
+            </div>
+            <p id="feedbackGerente" class="note" style="font-weight: bold; color: #b45309;"></p>
+        </div>
+
+        <div class="card">
+            <h3>Cadastrar Coordenador de Regional</h3>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="nomeCoordenador">Nome do Coordenador</label>
+                    <input type="text" id="nomeCoordenador" placeholder="Ex: Marco Medeiros">
+                </div>
+                <div class="form-group">
+                    <label for="regionalCoordSelect">Regional Associada</label>
+                    <select id="regionalCoordSelect" onchange="toggleRegionalCustoma()"></select>
+                </div>
+                <div class="form-group" id="grupoRegionalCustoma" style="display:none;">
+                    <label for="regionalCustomaCoord">Nome da Regional (personalizada)</label>
+                    <input type="text" id="regionalCustomaCoord" placeholder="Ex: Regional Norte">
+                </div>
+                <div class="form-group" style="max-width: 120px;">
+                    <label for="corCoordenador">Cor de Identificação</label>
+                    <input type="color" id="corCoordenador" value="#1e3a8a">
+                </div>
+                <div class="form-group">
+                    <button onclick="adicionarCoordenador()">➕ Vincular Coordenador</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>Importar Coordenadores em Lote (Excel/CSV)</h3>
+            <div class="form-group">
+                <label>Selecione seu arquivo (.xlsx, .xls ou .csv)</label>
+                <input type="file" id="excelFileCoords" accept=".xlsx, .xls, .csv">
+                <p class="note">⚠️ Cabeçalhos obrigatórios: <strong>Nome</strong> e <strong>Regional</strong>. Opcional: <strong>Cor</strong>.</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header-actions">
+                <h3>Coordenadores Cadastrados</h3>
+                <button onclick="exportarCoordenadoresCSV()" class="btn-secondary">📥 Exportar Base Coordenadores (CSV)</button>
+            </div>
+            <div class="table-container">
+                <table id="tabelaCoordenadores">
+                    <thead>
+                        <tr>
+                            <th>Nome do Coordenador</th>
+                            <th>Regional</th>
+                            <th>Identificador Visual</th>
+                            <th style="width: 100px;">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB 3: LANÇAR HOSPEDAGENS -->
+    <div id="viagens" class="tab-content">
+        <div class="card">
+            <h3>Lançar Período de Hospedagem</h3>
+            <div class="form-grid">
+                <div class="form-group" style="grid-column: span 2;">
+                    <label for="buscaViajanteInput">Buscar Viajante (Digite o Nome para filtrar)</label>
+                    <input type="text" id="buscaViajanteInput" placeholder="Comece a digitar o nome..." oninput="filtrarBuscaViajante(this.value)">
+                    <div id="resultadosBuscaViajante" class="search-results" style="display:none;"></div>
+                    <input type="hidden" id="viajanteViagemId">
+                    <div id="viajanteSelecionadoFeedback" class="note" style="font-weight:bold; color:var(--success); margin-top:5px;"></div>
+                </div>
+                <div class="form-group">
+                    <label for="cidadeViagem">Cidade de Hospedagem</label>
+                    <input type="text" id="cidadeViagem" placeholder="Ex: Belo Horizonte - MG">
+                </div>
+            </div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="dataInicio">Data de Check-in (Início)</label>
+                    <input type="date" id="dataInicio">
+                </div>
+                <div class="form-group">
+                    <label for="dataFim">Data de Check-out (Fim)</label>
+                    <input type="date" id="dataFim">
+                </div>
+                <div class="form-group">
+                    <button onclick="adicionarViagem()">🏠 Registrar Hospedagem</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB 4: NOVA ABA - SOLICITAR HOSPEDAGEM -->
+    <div id="solicitacaoTab" class="tab-content">
+        <div class="card">
+            <h3>📝 Solicitação de Hospedagem</h3>
+            <p class="note" style="margin-bottom: 20px;">Preencha os dados abaixo para submeter um pedido de reserva ao sistema.</p>
+
+            <div class="form-grid">
+                <!-- Nome com autocomplete preditivo -->
+                <div class="form-group" style="grid-column: span 2;">
+                    <label for="solicitacaoNomeInput">Nome do Viajante (Digite as primeiras letras)</label>
+                    <input type="text" id="solicitacaoNomeInput" placeholder="Digite o nome do viajante cadastrado..." oninput="filtrarBuscaSolicitacaoNome(this.value)" autocomplete="off">
+                    <div id="resultadosBuscaSolicitacao" class="search-results" style="display:none;"></div>
+                    <div id="feedbackSolicitacaoNome" class="note" style="font-weight:bold; color:var(--success);"></div>
+                </div>
+
+                <!-- Período: Check-in e Check-out -->
+                <div class="form-group">
+                    <label for="solicitacaoCheckIn">Data de Check-in</label>
+                    <input type="date" id="solicitacaoCheckIn">
+                </div>
+                <div class="form-group">
+                    <label for="solicitacaoCheckOut">Data de Check-out</label>
+                    <input type="date" id="solicitacaoCheckOut">
+                </div>
+
+                <!-- Campo Cidade com Autocomplete de Cidades do Brasil -->
+                <div class="form-group" style="grid-column: span 2;">
+                    <label for="solicitacaoCidade">Cidade Destino (Brasil)</label>
+                    <input type="text" id="solicitacaoCidade" list="listaCidadesBrasil" placeholder="Digite a cidade..." autocomplete="off">
+                    <datalist id="listaCidadesBrasil"></datalist>
+                </div>
+
+                <!-- Campo Mapa / Referência -->
+                <div class="form-group" style="grid-column: span 2;">
+                    <label for="solicitacaoMapa">Mapa / Link do Local ou Ponto de Referência</label>
+                    <input type="text" id="solicitacaoMapa" placeholder="Ex: Próximo à Unidade X, Link Google Maps ou Endereço exato">
+                </div>
+
+                <!-- Sugestão Livre de Hotel -->
+                <div class="form-group" style="grid-column: 1 / -1;">
+                    <label for="solicitacaoHotel">Sugestão de Hotel (Opcional / Campo Livre)</label>
+                    <textarea id="solicitacaoHotel" rows="3" placeholder="Digite nomes de hotéis preferenciais, observações de acomodação ou observações de preço..."></textarea>
+                </div>
+            </div>
+
+            <div style="margin-top:15px;">
+                <button onclick="enviarSolicitacao()" class="btn-success">🚀 Enviar Solicitação</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB 5: NOVA ABA - PAINEL DE SOLICITAÇÕES RECEBIDAS -->
+    <div id="solicitacoesRecebidasTab" class="tab-content">
+        <div class="card">
+            <div class="card-header-actions">
+                <h3>📑 Solicitações Recebidas & Acompanhamento</h3>
+                <button onclick="exportarSolicitacoesCSV()" class="btn-secondary">📥 Exportar Solicitações (CSV)</button>
+            </div>
+
+            <div class="table-container">
+                <table id="tabelaSolicitacoes">
+                    <thead>
+                        <tr>
+                            <th>Data Pedido</th>
+                            <th>Viajante</th>
+                            <th>Cidade Destino</th>
+                            <th>Período</th>
+                            <th>Mapa / Referência</th>
+                            <th>Sugestão de Hotel</th>
+                            <th style="min-width: 180px;">Status da Solicitação</th>
+                            <th style="width: 80px;">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB 6: RELATÓRIO GERAL -->
+    <div id="relatorios" class="tab-content">
+        <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; margin-bottom: 20px;">
+                <div>
+                    <h3>Filtros e Relatório de Ocupação</h3>
+                </div>
+                <div>
+                    <button onclick="exportarRelatorioCSV()" class="btn-secondary" style="margin-right:5px;">📥 Baixar CSV Filtrado</button>
+                    <button onclick="exportarRelatorio()" class="btn-success" style="margin-right:5px;">📥 Baixar Excel Filtrado</button>
+                    <button onclick="exportarRelatorioPDF()" class="btn-success">📄 Baixar PDF</button>
+                </div>
+            </div>
+            
+            <div class="filter-box" style="background-color: #f1f5f9; padding: 15px; border-radius: 6px; margin-bottom: 20px; border: 1px solid var(--border);">
+                <div class="form-grid" style="margin-bottom: 0;">
+                    <div class="form-group">
+                        <label for="filtroRegional">Filtrar por Regional</label>
+                        <select id="filtroRegional" onchange="renderizarRelatorio()"></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="filtroBusca">Buscar por Viajante ou Cidade</label>
+                        <input type="text" id="filtroBusca" placeholder="Digite para pesquisar..." oninput="renderizarRelatorio()">
+                    </div>
+                    <div class="form-group">
+                        <label for="filtroData">Filtrar por Data (Hospedagens Ativas)</label>
+                        <input type="date" id="filtroData" oninput="renderizarRelatorio()">
+                    </div>
+                    <div class="form-group">
+                        <label for="filtroStatus">Filtrar por Status</label>
+                        <select id="filtroStatus" onchange="renderizarRelatorio()">
+                            <option value="">-- Todos os Status --</option>
+                            <option value="alerta">🔴 Em Alerta (≤ 3 dias)</option>
+                            <option value="atencao">🟡 Atenção (4 dias)</option>
+                            <option value="ok">🟢 OK (Com próxima viagem)</option>
+                            <option value="encerrado">⚫ Encerrado</option>
+                            <option value="ativo">🔵 Ativos / Regulares</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="table-container">
+                <table id="tabelaRelatorio">
+                    <thead>
+                        <tr>
+                            <th>Viajante</th>
+                            <th>Regional</th>
+                            <th>Coordenador</th>
+                            <th>Cidade Destino</th>
+                            <th>Data Início</th>
+                            <th>Data Fim</th>
+                            <th style="text-align: center; width: 80px;">Status</th>
+                            <th style="width: 100px;">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB 7: CANCELAMENTOS -->
+    <div id="cancelamentosTab" class="tab-content">
+        <div class="card">
+            <h3 id="tituloCancelForm">➕ Novo Pedido de Cancelamento</h3>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="cancelOS">Número da O.S</label>
+                    <input type="text" id="cancelOS" placeholder="Ex: OS-2025-001">
+                </div>
+                <div class="form-group">
+                    <label for="cancelViajanteInput">Viajante</label>
+                    <input type="text" id="cancelViajanteInput" placeholder="Comece a digitar o nome..." oninput="filtrarBuscaCancelViajante(this.value)" autocomplete="off">
+                    <div id="resultadosBuscaCancelViajante" class="search-results" style="display:none;"></div>
+                    <input type="hidden" id="cancelViajante">
+                    <div id="cancelViajanteFeedback" style="font-size:12px; color:var(--success); margin-top:4px; font-weight:600;"></div>
+                </div>
+                <div class="form-group">
+                    <label for="cancelTipo">Tipo</label>
+                    <select id="cancelTipo">
+                        <option value="Hospedagem">Hospedagem</option>
+                        <option value="No-Show">No-Show</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="cancelStatus">Status</label>
+                    <select id="cancelStatus">
+                        <option value="Solicitado">Solicitado</option>
+                        <option value="Efetivado">Efetivado</option>
+                        <option value="Não Efetivado">Não Efetivado</option>
+                        <option value="No-Show">No-Show</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="cancelResponsavel">Responsável</label>
+                    <input type="text" id="cancelResponsavel" placeholder="Preenchido automaticamente..." readonly style="background-color:#e2e8f0; cursor:not-allowed;">
+                </div>
+                <div class="form-group">
+                    <label for="cancelData">Data do Pedido</label>
+                    <input type="date" id="cancelData">
+                </div>
+                <div class="form-group" style="grid-column: 1 / -1;">
+                    <label for="cancelObs">Observação</label>
+                    <textarea id="cancelObs" rows="2" placeholder="Detalhes sobre o cancelamento..."></textarea>
+                </div>
+            </div>
+            <div style="margin-top:14px; display:flex; gap:10px; flex-wrap:wrap;">
+                <button onclick="salvarCancelamento()" class="btn-success" id="btnSalvarCancel">💾 Salvar Cancelamento</button>
+                <button onclick="limparFormCancel()" class="btn-secondary">🔄 Limpar</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:14px;">
+                <h3 style="margin:0;">📋 Registros de Cancelamento</h3>
+                <div>
+                    <button onclick="exportarCancelamentosExcel()" class="btn-success" style="margin-right:5px;">📥 Baixar Extrato Excel</button>
+                    <button onclick="exportarCancelamentosPDF()" class="btn-success">📄 Baixar Extrato PDF</button>
+                </div>
+            </div>
+
+            <div class="filter-box" style="background:#f1f5f9; padding:14px; border-radius:6px; border:1px solid var(--border); margin-bottom:16px;">
+                <div class="form-grid" style="margin:0;">
+                    <div class="form-group">
+                        <label for="filtroCancelViajante">Filtrar por Viajante</label>
+                        <input type="text" id="filtroCancelViajante" placeholder="Digite o nome..." oninput="renderizarCancelamentos()">
+                    </div>
+                    <div class="form-group">
+                        <label for="filtroCancelStatus">Filtrar por Status</label>
+                        <select id="filtroCancelStatus" onchange="renderizarCancelamentos()">
+                            <option value="">-- Todos --</option>
+                            <option value="Solicitado">Solicitado</option>
+                            <option value="Efetivado">Efetivado</option>
+                            <option value="Não Efetivado">Não Efetivado</option>
+                            <option value="No-Show">No-Show</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="filtroCancelTipo">Filtrar por Tipo</label>
+                        <select id="filtroCancelTipo" onchange="renderizarCancelamentos()">
+                            <option value="">-- Todos --</option>
+                            <option value="Hospedagem">Hospedagem</option>
+                            <option value="No-Show">No-Show</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="filtroCancelResponsavel">Filtrar por Responsável</label>
+                        <input type="text" id="filtroCancelResponsavel" placeholder="Digite o nome..." oninput="renderizarCancelamentos()">
+                    </div>
+                    <div class="form-group">
+                        <label for="filtroCancelData">A partir de (Data)</label>
+                        <input type="date" id="filtroCancelData" oninput="renderizarCancelamentos()">
+                    </div>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table id="tabelaCancelamentos">
+                    <thead>
+                        <tr>
+                            <th>O.S</th>
+                            <th>Viajante</th>
+                            <th>Tipo</th>
+                            <th>Responsável</th>
+                            <th>Data</th>
+                            <th>Status</th>
+                            <th>Observação</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL EDIÇÃO DE VIAGEM -->
+<div id="modalEdicao" class="modal">
+    <div class="modal-content">
+        <h3>Editar Dados da Hospedagem</h3>
+        <input type="hidden" id="editViagemIndex">
+        <div class="form-group" style="margin-bottom: 12px;">
+            <label>Viajante</label>
+            <input type="text" id="editViagemNome" disabled style="background-color: #e2e8f0;">
+        </div>
+        <div class="form-group" style="margin-bottom: 12px;">
+            <label>Cidade Destino</label>
+            <input type="text" id="editViagemCidade">
+        </div>
+        <div class="form-group" style="margin-bottom: 12px;">
+            <label>Data de Início</label>
+            <input type="date" id="editViagemInicio">
+        </div>
+        <div class="form-group" style="margin-bottom: 12px;">
+            <label>Data de Fim</label>
+            <input type="date" id="editViagemFim">
+        </div>
+        <div class="modal-actions">
+            <button class="btn-secondary" onclick="fecharModal()">Fechar</button>
+            <button class="btn-success" onclick="salvarModalEdicao()">Salvar Alterações</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL AUDITORIA EXCEL (LISTA DE NÃO ENCONTRADOS) -->
+<div id="modalAuditoriaExcel" class="modal">
+    <div class="modal-content">
+        <h3>🔍 Nomes Não Encontrados na Planilha</h3>
+        <p class="note" style="margin-bottom: 15px;">Os seguintes viajantes estão cadastrados no sistema, mas <strong>NÃO</strong> constam no arquivo Excel enviado. Marque os que você deseja apagar do sistema:</p>
+        
+        <div style="max-height: 250px; overflow-y: auto; border: 1px solid var(--border); padding: 10px; border-radius: 6px; margin-bottom: 15px;">
+            <ul id="listaAuditoriaNomes" style="list-style: none;"></ul>
+        </div>
+        
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <label><input type="checkbox" id="checkSelecionarTodosAuditoria" onchange="toggleSelecionarTodosAuditoria(this)"> Selecionar Todos</label>
+            <div class="modal-actions" style="margin-top:0;">
+                <button class="btn-secondary" onclick="fecharModalAuditoria()">Manter Todos</button>
+                <button class="btn-danger" onclick="confirmarExclusaoAuditoria()">🗑️ Excluir Selecionados</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const regionaisPadrao = [
+        "Back Office", "IE Piraquê - MG", "Regional Cabreúva", "Regional Taubaté", 
+        "Regional São Paulo", "Regional Bauru", "Baixada Santista (Regional Taubaté)", 
+        "R&M LT / Leilões", "Segurança do Trabalho"
+    ];
+
+    // Cidades do Brasil principais para datalist
+    const cidadesBrasil = [
+        "São Paulo - SP", "Rio de Janeiro - RJ", "Belo Horizonte - MG", "Brasília - DF", "Salvador - BA",
+        "Fortaleza - CE", "Curitiba - PR", "Manaus - AM", "Recife - PE", "Porto Alegre - RS",
+        "Belém - PA", "Goiânia - GO", "Guarulhos - SP", "Campinas - SP", "São Luís - MA",
+        "São Gonçalo - RJ", "Maceió - AL", "Duque de Caxias - RJ", "Campo Grande - MS", "Natal - RN",
+        "Teresina - PI", "São Bernardo do Campo - SP", "Nova Iguaçu - RJ", "João Pessoa - PB", "São José dos Campos - SP",
+        "Santo André - SP", "Ribeirão Preto - SP", "Uberlândia - MG", "Osasco - SP", "Sorocaba - SP",
+        "Aracaju - SE", "Feira de Santana - BA", "Cuiabá - MT", "Joinville - SC", "Florianópolis - SC",
+        "Macapá - AP", "Juiz de Fora - MG", "Londrina - PR", "Niterói - RJ", "Anápolis - GO",
+        "Vitória - ES", "Vila Velha - ES", "Caxias do Sul - RS", "Campos dos Goytaxazes - RJ", "Santos - SP",
+        "São José do Rio Preto - SP", "Mauá - SP", "Betim - MG", "Caxias - MA", "Franca - SP",
+        "Caruaru - PE", "Olinda - PE", "Volta Redonda - RJ", "Piracicaba - SP", "Bauru - SP",
+        "Taubaté - SP", "Cabreúva - SP", "Ipatinga - MG", "Uberaba - MG", "Montes Claros - MG"
+    ];
+
+    let viajantes = JSON.parse(localStorage.getItem('h_v9_viajantes')) || [];
+    let viagens = JSON.parse(localStorage.getItem('h_v9_viagens')) || [];
+    let coordenadores = JSON.parse(localStorage.getItem('h_v9_coordenadores')) || [];
+    let gerenteGeral = localStorage.getItem('h_v9_gerente') || "";
+    let cancelamentos = JSON.parse(localStorage.getItem('h_v9_cancelamentos')) || [];
+    let solicitacoes = JSON.parse(localStorage.getItem('h_v9_solicitacoes')) || [];
+    
+    let cancelIndexEdicao = null;
+    let paginaAtualViajantes = 1;
+    const itensPorPaginaViajantes = 10;
+    let viajantesFiltradosTabela = [];
+    let indexEdicaoViajante = null;
+    let viagensFiltradasAtuais = [];
+    let auditoriaNomesParaExcluir = [];
+
+    function init() {
+        carregarRegionaisSelects();
+        carregarCidadesDatalist();
+        atualizarCoordenadoresDropdownCadastro();
+        
+        viajantesFiltradosTabela = viajantes.map((v, i) => ({ ...v, idxOriginal: i }));
+        document.getElementById('cancelData').value = new Date().toISOString().split('T')[0];
+
+        renderizarTabelaViajantes();
+        renderizarTabelaCoordenadores();
+        renderizarRelatorio();
+        renderizarCancelamentos();
+        renderizarSolicitacoes();
+        
+        if(gerenteGeral) {
+            document.getElementById('nomeGerente').value = gerenteGeral;
+            document.getElementById('feedbackGerente').textContent = `Gerente atual: ${gerenteGeral}`;
+        }
+    }
+
+    function salvarLocalStorage() {
+        localStorage.setItem('h_v9_viajantes', JSON.stringify(viajantes));
+        localStorage.setItem('h_v9_viagens', JSON.stringify(viagens));
+        localStorage.setItem('h_v9_coordenadores', JSON.stringify(coordenadores));
+        localStorage.setItem('h_v9_gerente', gerenteGeral);
+        localStorage.setItem('h_v9_cancelamentos', JSON.stringify(cancelamentos));
+        localStorage.setItem('h_v9_solicitacoes', JSON.stringify(solicitacoes));
+        
+        filtrarTabelaViajantes(false); 
+        renderizarTabelaCoordenadores();
+        renderizarRelatorio();
+        renderizarCancelamentos();
+        renderizarSolicitacoes();
+    }
+
+    function showTab(tabId) {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        
+        const activeTab = Array.from(document.querySelectorAll('.tab')).find(t => t.getAttribute('onclick').includes(tabId));
+        if(activeTab) activeTab.classList.add('active');
+        document.getElementById(tabId).classList.add('active');
+
+        if(tabId === 'cancelamentosTab') renderizarCancelamentos();
+        if(tabId === 'solicitacoesRecebidasTab') renderizarSolicitacoes();
+    }
+
+    function carregarRegionaisSelects() {
+        const select = document.getElementById('regionalSelect');
+        const select2 = document.getElementById('regionalCoordSelect');
+        const filtroSelect = document.getElementById('filtroRegional');
+        
+        select.innerHTML = '';
+        select2.innerHTML = '';
+        filtroSelect.innerHTML = '<option value="">-- Todas as Regionais --</option>';
+        
+        regionaisPadrao.forEach(r => {
+            let o1 = document.createElement('option'); o1.value = r; o1.textContent = r; select.appendChild(o1);
+            let o2 = document.createElement('option'); o2.value = r; o2.textContent = r; select2.appendChild(o2);
+            let o3 = document.createElement('option'); o3.value = r; o3.textContent = r; filtroSelect.appendChild(o3);
+        });
+
+        let oCustom = document.createElement('option');
+        oCustom.value = '__outra__';
+        oCustom.textContent = '✏️ Outra Regional (digitar)...';
+        select2.appendChild(oCustom);
+    }
+
+    function carregarCidadesDatalist() {
+        const dl = document.getElementById('listaCidadesBrasil');
+        dl.innerHTML = '';
+        cidadesBrasil.forEach(c => {
+            let opt = document.createElement('option');
+            opt.value = c;
+            dl.appendChild(opt);
+        });
+    }
+
+    function salvarGerente() {
+        const nome = document.getElementById('nomeGerente').value.trim();
+        if(!nome) {
+            gerenteGeral = "";
+            document.getElementById('feedbackGerente').textContent = "";
+        } else {
+            gerenteGeral = nome;
+            document.getElementById('feedbackGerente').textContent = `Gerente atual definido: ${gerenteGeral}`;
+        }
+        salvarLocalStorage();
+        atualizarCoordenadoresDropdownCadastro();
+        alert("Configuração do Gerente Geral atualizada!");
+    }
+
+    function atualizarCoordenadoresDropdownCadastro() {
+        const reg = document.getElementById('regionalSelect').value;
+        const coordSelect = document.getElementById('coordenadorSelect');
+        coordSelect.innerHTML = '';
+        
+        let optNenhum = document.createElement('option');
+        optNenhum.value = "";
+        optNenhum.textContent = "-- Sem coordenador específico --";
+        coordSelect.appendChild(optNenhum);
+        
+        if (gerenteGeral && gerenteGeral.trim() !== "") {
+            let optGerente = document.createElement('option');
+            optGerente.value = gerenteGeral;
+            optGerente.textContent = `👑 ${gerenteGeral} (Gerente Geral)`;
+            coordSelect.appendChild(optGerente);
+        }
+        
+        const filtrados = coordenadores.filter(c => c.regional === reg);
+        filtrados.forEach(c => {
+            let opt = document.createElement('option');
+            opt.value = c.nome;
+            opt.textContent = c.nome;
+            coordSelect.appendChild(opt);
+        });
+    }
+
+    function toggleRegionalCustoma() {
+        const sel = document.getElementById('regionalCoordSelect');
+        const grupo = document.getElementById('grupoRegionalCustoma');
+        grupo.style.display = sel.value === '__outra__' ? 'block' : 'none';
+    }
+
+    function adicionarCoordenador() {
+        const nome = document.getElementById('nomeCoordenador').value.trim();
+        const selVal = document.getElementById('regionalCoordSelect').value;
+        const cor = document.getElementById('corCoordenador').value;
+
+        let regional = selVal;
+        if (selVal === '__outra__') {
+            regional = document.getElementById('regionalCustomaCoord').value.trim();
+            if (!regional) return alert("Digite o nome da regional personalizada.");
+        }
+
+        if(!nome) return alert("Insira o nome do coordenador.");
+
+        coordenadores.push({ nome, regional, cor });
+        document.getElementById('nomeCoordenador').value = '';
+        document.getElementById('regionalCustomaCoord').value = '';
+        document.getElementById('grupoRegionalCustoma').style.display = 'none';
+        document.getElementById('regionalCoordSelect').selectedIndex = 0;
+        salvarLocalStorage();
+        atualizarCoordenadoresDropdownCadastro();
+        alert("Coordenador cadastrado com sucesso!");
+    }
+
+    function excluirCoordenador(index) {
+        if(confirm("Deseja remover este coordenador?")) {
+            coordenadores.splice(index, 1);
+            salvarLocalStorage();
+            atualizarCoordenadoresDropdownCadastro();
+        }
+    }
+
+    function renderizarTabelaCoordenadores() {
+        const tbody = document.querySelector('#tabelaCoordenadores tbody');
+        tbody.innerHTML = '';
+        if(coordenadores.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:var(--text-light);">Nenhum coordenador cadastrado.</td></tr>`;
+            return;
+        }
+        coordenadores.forEach((c, i) => {
+            tbody.innerHTML += `
+                <tr>
+                    <td><strong>${c.nome}</strong></td>
+                    <td>${c.regional}</td>
+                    <td><span class="coord-badge" style="background-color:${c.cor}">${c.cor}</span></td>
+                    <td><button class="btn-danger" onclick="excluirCoordenador(${i})">🗑️</button></td>
+                </tr>
+            `;
+        });
+    }
+
+    /* DETECÇÃO E MANIPULAÇÃO DE DUPLICADOS */
+    function ehNomeDuplicado(nome, idxAtual = null) {
+        const contagem = viajantes.filter((v, idx) => v.nome.toLowerCase().trim() === nome.toLowerCase().trim() && idx !== idxAtual).length;
+        return contagem > 0;
+    }
+
+    function verificarDuplicadosManual() {
+        const nomesDuplicados = viajantes.filter((v, idx) => ehNomeDuplicado(v.nome, idx));
+        if(nomesDuplicados.length === 0) {
+            alert("Nenhum cadastro duplicado foi encontrado!");
+            return;
+        }
+        document.getElementById('pesquisaViajanteTabela').value = '';
+        viajantesFiltradosTabela = viajantes.map((v, i) => ({ ...v, idxOriginal: i })).filter((v, idx) => ehNomeDuplicado(v.nome, idx));
+        paginaAtualViajantes = 1;
+        renderizarTabelaViajantes();
+        alert(`Foram localizados ${nomesDuplicados.length} registros com nomes duplicados!`);
+    }
+
+    function filtrarTabelaViajantes(resetarPagina = true) {
+        const termo = document.getElementById('pesquisaViajanteTabela').value.toLowerCase().trim();
+        
+        viajantesFiltradosTabela = viajantes.map((v, i) => ({ ...v, idxOriginal: i })).filter(v => {
+            return v.nome.toLowerCase().includes(termo) || v.regional.toLowerCase().includes(termo) || (v.coordenador && v.coordenador.toLowerCase().includes(termo));
+        });
+
+        if (resetarPagina) {
+            paginaAtualViajantes = 1;
+        }
+        renderizarTabelaViajantes();
+    }
+
+    function iniciarEditarViajante(idxOriginal) {
+        indexEdicaoViajante = idxOriginal;
+        const v = viajantes[idxOriginal];
+        
+        document.getElementById('nomeViajante').value = v.nome;
+        document.getElementById('regionalSelect').value = v.regional;
+        
+        atualizarCoordenadoresDropdownCadastro();
+        document.getElementById('coordenadorSelect').value = v.coordenador || "";
+
+        document.getElementById('tituloCadastroViajante').textContent = "✏️ Editar Viajante";
+        document.getElementById('btnSalvarViajante').textContent = "Salvar Alterações";
+        document.getElementById('btnCancelarEdicaoViajante').style.display = "inline-block";
+        
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function adicionarViajante() {
+        const nome = document.getElementById('nomeViajante').value.trim();
+        const regional = document.getElementById('regionalSelect').value;
+        const coordenador = document.getElementById('coordenadorSelect').value;
+
+        if(!nome) return alert("Preencha o nome do viajante.");
+
+        if(ehNomeDuplicado(nome, indexEdicaoViajante)) {
+            if(!confirm(`⚠️ AVISO: Já existe um viajante cadastrado com o nome "${nome}". Deseja continuar assim mesmo?`)) {
+                return;
+            }
+        }
+
+        if(indexEdicaoViajante !== null) {
+            viajantes[indexEdicaoViajante] = { nome, regional, coordenador };
+            indexEdicaoViajante = null;
+            document.getElementById('tituloCadastroViajante').textContent = "Cadastrar Novo Viajante";
+            document.getElementById('btnSalvarViajante').textContent = "➕ Cadastrar";
+            document.getElementById('btnCancelarEdicaoViajante').style.display = "none";
+            alert("Cadastro atualizado!");
+        } else {
+            viajantes.push({ nome, regional, coordenador });
+            alert("Viajante cadastrado!");
+        }
+
+        document.getElementById('nomeViajante').value = '';
+        salvarLocalStorage();
+    }
+
+    function cancelarEdicaoViajante() {
+        indexEdicaoViajante = null;
+        document.getElementById('nomeViajante').value = '';
+        document.getElementById('tituloCadastroViajante').textContent = "Cadastrar Novo Viajante";
+        document.getElementById('btnSalvarViajante').textContent = "➕ Cadastrar";
+        document.getElementById('btnCancelarEdicaoViajante').style.display = "none";
+    }
+
+    function excluirViajante(idxOriginal) {
+        if(confirm("Deseja excluir este viajante?")) {
+            viajantes.splice(idxOriginal, 1);
+            salvarLocalStorage();
+        }
+    }
+
+    function obterCorCoordenador(nomeCoord, regional) {
+        if(!nomeCoord) return "#64748b";
+        if(gerenteGeral && nomeCoord.toLowerCase() === gerenteGeral.toLowerCase()) return "#d97706";
+        
+        const c = coordenadores.find(item => item.nome.toLowerCase() === nomeCoord.toLowerCase() && item.regional === regional);
+        return c ? c.cor : "#64748b";
+    }
+
+    function renderizarTabelaViajantes() {
+        const tbody = document.querySelector('#tabelaViajantes tbody');
+        tbody.innerHTML = '';
+        
+        const totalItens = viajantesFiltradosTabela.length;
+        if(totalItens === 0) {
+            tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:var(--text-light);">Nenhum viajante encontrado.</td></tr>`;
+            document.getElementById('infoPaginaViajantes').textContent = "Mostrando 0 de 0 viajantes";
+            document.getElementById('botoesPaginaViajantes').innerHTML = '';
+            return;
+        }
+
+        const totalPaginas = Math.ceil(totalItens / itensPorPaginaViajantes);
+        if (paginaAtualViajantes > totalPaginas) paginaAtualViajantes = totalPaginas;
+        
+        const indiceInicio = (paginaAtualViajantes - 1) * itensPorPaginaViajantes;
+        const indiceFim = Math.min(indiceInicio + itensPorPaginaViajantes, totalItens);
+        
+        const dadosPagina = viajantesFiltradosTabela.slice(indiceInicio, indiceFim);
+
+        dadosPagina.forEach((v) => {
+            const col = obterCorCoordenador(v.coordenador, v.regional);
+            let coordTxt = "<em>Nenhum</em>";
+            if (v.coordenador) {
+                if (gerenteGeral && v.coordenador.toLowerCase() === gerenteGeral.toLowerCase()) {
+                    coordTxt = `<span class="coord-badge" style="background-color:${col}">👑 ${v.coordenador}</span>`;
+                } else {
+                    coordTxt = `<span class="coord-badge" style="background-color:${col}">${v.coordenador}</span>`;
+                }
+            }
+            
+            const isDup = ehNomeDuplicado(v.nome, v.idxOriginal);
+            const dupBadge = isDup ? `<span class="badge-duplicate">⚠️ Duplicado</span>` : '';
+
+            tbody.innerHTML += `
+                <tr>
+                    <td><span class="viajante-tag" style="background-color:${col}">${v.nome}</span>${dupBadge}</td>
+                    <td>${v.regional}</td>
+                    <td>${coordTxt}</td>
+                    <td>
+                        <div class="actions-btn-group">
+                            <button onclick="iniciarEditarViajante(${v.idxOriginal})">✏️</button>
+                            <button class="btn-danger" onclick="excluirViajante(${v.idxOriginal})">🗑️</button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        });
+
+        document.getElementById('infoPaginaViajantes').textContent = `Mostrando ${indiceInicio + 1}-${indiceFim} de ${totalItens} viajantes`;
+        renderizarBotoesPagination(totalPaginas);
+    }
+
+    function renderizarBotoesPagination(totalPaginas) {
+        const containerBotoes = document.getElementById('botoesPaginaViajantes');
+        containerBotoes.innerHTML = '';
+        if(totalPaginas <= 1) return;
+
+        for(let i = 1; i <= totalPaginas; i++) {
+            const btn = document.createElement('button');
+            btn.className = `pagination-btn ${i === paginaAtualViajantes ? 'active' : ''}`;
+            btn.textContent = i;
+            btn.onclick = function() {
+                paginaAtualViajantes = i;
+                renderizarTabelaViajantes();
+            };
+            containerBotoes.appendChild(btn);
+        }
+    }
+
+    /* AUDITORIA E COMPARAÇÃO VIA EXCEL DA ABA DE CADASTROS */
+    document.getElementById('excelConferenciaFile').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if(!file) return;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, {type: 'array'});
+                const sheet = workbook.Sheets[workbook.SheetNames[0]];
+                const excelData = XLSX.utils.sheet_to_json(sheet);
+                
+                const nomesExcel = new Set();
+                excelData.forEach(row => {
+                    let nome = row["Nome"] || row["nome"] || row["NOME"] || row["Viajante"] || row["VIAJANTE"];
+                    if(nome) nomesExcel.add(nome.toString().trim().toLowerCase());
+                });
+
+                if(nomesExcel.size === 0) return alert("Não foi possível identificar a coluna 'Nome' na planilha enviada.");
+
+                // Filtra viajantes cadastrados que NÃO estão na planilha enviada
+                auditoriaNomesParaExcluir = viajantes.map((v, idx) => ({ ...v, idxOriginal: idx }))
+                    .filter(v => !nomesExcel.has(v.nome.trim().toLowerCase()));
+
+                if(auditoriaNomesParaExcluir.length === 0) {
+                    alert("✅ Todos os viajantes cadastrados no sistema foram encontrados na planilha enviada! Nenhum viajante sobrou.");
+                    return;
+                }
+
+                exibirModalAuditoria();
+            } catch(err) { alert("Erro ao processar planilha para conferência."); }
+        };
+        reader.readAsArrayBuffer(file);
+    });
+
+    function exibirModalAuditoria() {
+        const ul = document.getElementById('listaAuditoriaNomes');
+        ul.innerHTML = '';
+        auditoriaNomesParaExcluir.forEach(v => {
+            ul.innerHTML += `
+                <li style="padding: 6px 0; border-bottom: 1px solid #e2e8f0;">
+                    <label>
+                        <input type="checkbox" class="chk-auditoria" value="${v.idxOriginal}" checked>
+                        <strong>${v.nome}</strong> (${v.regional})
+                    </label>
+                </li>
+            `;
+        });
+        document.getElementById('modalAuditoriaExcel').style.display = 'flex';
+    }
+
+    function toggleSelecionarTodosAuditoria(chkMaster) {
+        document.querySelectorAll('.chk-auditoria').forEach(c => c.checked = chkMaster.checked);
+    }
+
+    function fecharModalAuditoria() {
+        document.getElementById('modalAuditoriaExcel').style.display = 'none';
+        document.getElementById('excelConferenciaFile').value = '';
+    }
+
+    function confirmarExclusaoAuditoria() {
+        const selecionados = Array.from(document.querySelectorAll('.chk-auditoria:checked')).map(c => parseInt(c.value));
+        if(selecionados.length === 0) return alert("Selecione pelo menos um viajante para excluir.");
+
+        if(confirm(`Tem certeza que deseja apagar os ${selecionados.length} viajantes selecionados do sistema?`)) {
+            // Ordenar índices em ordem decrescente para não estragar a posição dos itens ao splice
+            selecionados.sort((a,b) => b - a);
+            selecionados.forEach(idx => {
+                viajantes.splice(idx, 1);
+            });
+            salvarLocalStorage();
+            fecharModalAuditoria();
+            alert("Exclusão concluída com sucesso!");
+        }
+    }
+
+    /* BUSCA PREDIÇÃO DE VIAJANTE PARA VIAGENS E SOLICITAÇÕES */
+    function filtrarBuscaViajante(termo) {
+        const divResultados = document.getElementById('resultadosBuscaViajante');
+        divResultados.innerHTML = '';
+        if(!termo.trim()) {
+            divResultados.style.display = 'none';
+            return;
+        }
+
+        const filtrados = viajantes.map((v, i) => ({...v, idx: i})).filter(v => v.nome.toLowerCase().includes(termo.toLowerCase()));
+        
+        if(filtrados.length === 0) {
+            divResultados.innerHTML = '<div class="search-item" style="color:red;">Nenhum viajante encontrado</div>';
+            divResultados.style.display = 'block';
+            return;
+        }
+
+        filtrados.forEach(v => {
+            const div = document.createElement('div');
+            div.className = 'search-item';
+            div.innerHTML = `<strong>${v.nome}</strong> <small style="color:var(--text-light)">(${v.regional})</small>`;
+            div.onclick = function() {
+                document.getElementById('viajanteViagemId').value = v.idx;
+                document.getElementById('buscaViajanteInput').value = v.nome;
+                document.getElementById('viajanteSelecionadoFeedback').textContent = `Selecionado: ${v.nome} (${v.regional})`;
+                divResultados.style.display = 'none';
+            };
+            divResultados.appendChild(div);
+        });
+        divResultados.style.display = 'block';
+    }
+
+    function adicionarViagem() {
+        const vIdx = document.getElementById('viajanteViagemId').value;
+        const cidade = document.getElementById('cidadeViagem').value.trim();
+        const inicio = document.getElementById('dataInicio').value;
+        const fim = document.getElementById('dataFim').value;
+
+        if(vIdx === "" || !cidade || !inicio || !fim) return alert("Preencha todos os campos!");
+
+        const v = viajantes[vIdx];
+        viagens.push({
+            nomeViajante: v.nome,
+            regional: v.regional,
+            coordenador: v.coordenador || "",
+            cidade: cidade,
+            dataInicio: inicio,
+            dataFim: fim
+        });
+
+        document.getElementById('buscaViajanteInput').value = '';
+        document.getElementById('viajanteViagemId').value = '';
+        document.getElementById('viajanteSelecionadoFeedback').textContent = '';
+        document.getElementById('cidadeViagem').value = '';
+        document.getElementById('dataInicio').value = '';
+        document.getElementById('dataFim').value = '';
+
+        salvarLocalStorage();
+        alert("Viagem registrada!");
+        showTab('relatorios');
+    }
+
+    /* SISTEMA DE SOLICITAÇÃO DE HOSPEDAGEM (ABA SOLICITAÇÃO) */
+    function filtrarBuscaSolicitacaoNome(termo) {
+        const div = document.getElementById('resultadosBuscaSolicitacao');
+        div.innerHTML = '';
+        if (!termo.trim()) { div.style.display = 'none'; return; }
+
+        const filtrados = viajantes.filter(v => v.nome.toLowerCase().includes(termo.toLowerCase()));
+
+        if (filtrados.length === 0) {
+            div.innerHTML = '<div class="search-item" style="color:red;">Nenhum viajante encontrado</div>';
+            div.style.display = 'block';
+            return;
+        }
+
+        filtrados.forEach(v => {
+            const item = document.createElement('div');
+            item.className = 'search-item';
+            item.innerHTML = `<strong>${v.nome}</strong> <small style="color:var(--text-light)">(${v.regional})</small>`;
+            item.onclick = () => {
+                document.getElementById('solicitacaoNomeInput').value = v.nome;
+                document.getElementById('feedbackSolicitacaoNome').textContent = `Viajante selecionado: ${v.nome} - Regional: ${v.regional}`;
+                div.style.display = 'none';
+            };
+            div.appendChild(item);
+        });
+        div.style.display = 'block';
+    }
+
+    function enviarSolicitacao() {
+        const nome = document.getElementById('solicitacaoNomeInput').value.trim();
+        const checkIn = document.getElementById('solicitacaoCheckIn').value;
+        const checkOut = document.getElementById('solicitacaoCheckOut').value;
+        const cidade = document.getElementById('solicitacaoCidade').value.trim();
+        const mapa = document.getElementById('solicitacaoMapa').value.trim();
+        const hotel = document.getElementById('solicitacaoHotel').value.trim();
+
+        if(!nome || !checkIn || !checkOut || !cidade) {
+            return alert("Por favor preencha os campos obrigatórios: Nome do viajante, Período (Check-in / Check-out) e Cidade.");
+        }
+
+        const novaSolicitacao = {
+            id: Date.now(),
+            dataSolicitacao: new Date().toISOString().split('T')[0],
+            nomeViajante: nome,
+            checkIn: checkIn,
+            checkOut: checkOut,
+            cidade: cidade,
+            mapa: mapa,
+            hotelSugestao: hotel,
+            status: 'Aguardando cotação'
+        };
+
+        solicitacoes.push(novaSolicitacao);
+        salvarLocalStorage();
+
+        // Limpar Form
+        document.getElementById('solicitacaoNomeInput').value = '';
+        document.getElementById('feedbackSolicitacaoNome').textContent = '';
+        document.getElementById('solicitacaoCheckIn').value = '';
+        document.getElementById('solicitacaoCheckOut').value = '';
+        document.getElementById('solicitacaoCidade').value = '';
+        document.getElementById('solicitacaoMapa').value = '';
+        document.getElementById('solicitacaoHotel').value = '';
+
+        alert("Solicitação enviada com sucesso!");
+        showTab('solicitacoesRecebidasTab');
+    }
+
+    function atualizarStatusSolicitacao(index, novoStatus) {
+        solicitacoes[index].status = novoStatus;
+        localStorage.setItem('h_v9_solicitacoes', JSON.stringify(solicitacoes));
+    }
+
+    function excluirSolicitacao(index) {
+        if(confirm("Deseja apagar esta solicitação?")) {
+            solicitacoes.splice(index, 1);
+            salvarLocalStorage();
+        }
+    }
+
+    function renderizarSolicitacoes() {
+        const tbody = document.querySelector('#tabelaSolicitacoes tbody');
+        tbody.innerHTML = '';
+
+        if(solicitacoes.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:var(--text-light);">Nenhuma solicitação registrada.</td></tr>`;
+            return;
+        }
+
+        const opcoesStatus = [
+            "Aguardando cotação",
+            "Aguardando escolha",
+            "Aguardando autorização de custo",
+            "Aguardando emissão",
+            "Emitida",
+            "Cancelada"
+        ];
+
+        solicitacoes.forEach((s, i) => {
+            let selectStatusHtml = `<select class="status-select" onchange="atualizarStatusSolicitacao(${i}, this.value)">`;
+            opcoesStatus.forEach(opt => {
+                selectStatusHtml += `<option value="${opt}" ${s.status === opt ? 'selected' : ''}>${opt}</option>`;
+            });
+            selectStatusHtml += `</select>`;
+
+            const mapaHtml = s.mapa 
+                ? (s.mapa.startsWith('http') ? `<a href="${s.mapa}" target="_blank">🗺️ Abrir Mapa</a>` : `📍 ${s.mapa}`)
+                : '<span style="color:var(--text-light);">—</span>';
+
+            tbody.innerHTML += `
+                <tr>
+                    <td>${formatarDataBR(s.dataSolicitacao)}</td>
+                    <td><strong>${s.nomeViajante}</strong></td>
+                    <td>${s.cidade}</td>
+                    <td>${formatarDataBR(s.checkIn)} até ${formatarDataBR(s.checkOut)}</td>
+                    <td>${mapaHtml}</td>
+                    <td>${s.hotelSugestao || '<span style="color:var(--text-light);">—</span>'}</td>
+                    <td>${selectStatusHtml}</td>
+                    <td><button class="btn-danger" onclick="excluirSolicitacao(${i})">🗑️</button></td>
+                </tr>
+            `;
+        });
+    }
+
+    function exportarSolicitacoesCSV() {
+        if(solicitacoes.length === 0) return alert("Não há solicitações para exportar.");
+        let csv = "Data Solicitacao,Viajante,Cidade,Check-In,Check-Out,Mapa,Sugestao Hotel,Status\n";
+        solicitacoes.forEach(s => {
+            csv += `"${formatarDataBR(s.dataSolicitacao)}","${s.nomeViajante.replace(/"/g, '""')}","${s.cidade.replace(/"/g, '""')}","${formatarDataBR(s.checkIn)}","${formatarDataBR(s.checkOut)}","${(s.mapa||"").replace(/"/g, '""')}","${(s.hotelSugestao||"").replace(/"/g, '""')}","${s.status}"\n`;
+        });
+        triggerCSVDownload("relatorio_solicitacoes.csv", csv);
+    }
+
+    /* AUXILIARES DE DATA E IMPRESSÃO/RELATÓRIOS */
+    function formatarDataBR(dataIso) {
+        if(!dataIso) return "";
+        const partes = dataIso.split('-');
+        if(partes.length !== 3) return dataIso;
+        return `${partes[2]}/${partes[1]}/${partes[0]}`;
+    }
+
+    function calcularStatus(v, hoje) {
+        const dataFim = new Date(v.dataFim + 'T00:00:00');
+        if (dataFim < hoje) return 'encerrado';
+
+        const temProxima = viagens.some(outra => {
+            return outra !== v &&
+                outra.nomeViajante === v.nomeViajante &&
+                new Date(outra.dataInicio + 'T00:00:00') >= dataFim;
+        });
+
+        if (temProxima) return 'ok';
+        const diffDays = Math.ceil((dataFim - hoje) / (1000 * 60 * 60 * 24));
+        if (diffDays <= 3) return 'alerta';
+        if (diffDays === 4) return 'atencao';
+        return 'ativo';
+    }
+
+    function renderizarRelatorio() {
+        const tbody = document.querySelector('#tabelaRelatorio tbody');
+        tbody.innerHTML = '';
+        if(viagens.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:var(--text-light);">Nenhuma viagem.</td></tr>`;
+            return;
+        }
+
+        const fReg = document.getElementById('filtroRegional').value;
+        const fBusca = document.getElementById('filtroBusca').value.toLowerCase().trim();
+        const fData = document.getElementById('filtroData').value;
+        const fStatus = document.getElementById('filtroStatus').value;
+
+        const hoje = new Date();
+        hoje.setHours(0,0,0,0);
+
+        let viajesComIdx = viagens.map((v, i) => ({...v, idxOrig: i}));
+
+        viagensFiltradasAtuais = viajesComIdx.filter(v => {
+            const mReg = fReg === "" || v.regional === fReg;
+            const mBusca = fBusca === "" || v.nomeViajante.toLowerCase().includes(fBusca) || v.cidade.toLowerCase().includes(fBusca);
+            const mData = fData === "" || v.dataFim >= fData;
+            const status = calcularStatus(v, hoje);
+            const mStatus = fStatus === "" || status === fStatus;
+            return mReg && mBusca && mData && mStatus;
+        });
+
+        viagensFiltradasAtuais.sort((a,b) => new Date(b.dataInicio) - new Date(a.dataInicio));
+
+        if(viagensFiltradasAtuais.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:var(--text-light);">Nenhum resultado.</td></tr>`;
+            return;
+        }
+
+        viagensFiltradasAtuais.forEach(v => {
+            const col = obterCorCoordenador(v.coordenador, v.regional);
+            let coordTxt = '<em>Nenhum</em>';
+            if (v.coordenador) {
+                coordTxt = `<span class="coord-badge" style="background-color:${col}">${v.coordenador}</span>`;
+            }
+
+            const status = calcularStatus(v, hoje);
+            const dataFim = new Date(v.dataFim + 'T00:00:00');
+            const diffDays = Math.ceil((dataFim - hoje) / (1000 * 60 * 60 * 24));
+
+            let statusHtml = '';
+            let rowStyle = '';
+
+            if (status === 'encerrado') {
+                statusHtml = `<span title="Check-out encerrado" style="font-size:18px; cursor:default;">⚫</span>`;
+                rowStyle = 'opacity:0.6; background-color:#f8fafc;';
+            } else if (status === 'ok') {
+                statusHtml = `<span title="Próxima viagem já lançada (OK)" style="font-size:18px; cursor:default;">🟢</span>`;
+                rowStyle = 'background-color:#f0fdf4;';
+            } else if (status === 'alerta') {
+                const dias = diffDays === 0 ? 'Hoje!' : diffDays === 1 ? 'Amanhã!' : `${diffDays} dias`;
+                statusHtml = `<span title="Em Alerta: Vence em: ${dias}. Sem próxima viagem." style="font-size:18px; cursor:default;">🔴</span>`;
+                rowStyle = 'background-color:#fff5f5; font-weight:bold;';
+            } else if (status === 'atencao') {
+                statusHtml = `<span title="Atenção: Vence em exatos 4 dias. Sem próxima viagem." style="font-size:18px; cursor:default;">🟡</span>`;
+                rowStyle = 'background-color:#fefce8;';
+            } else {
+                statusHtml = `<span title="Ativo: Faltam ${diffDays} dias." style="font-size:18px; cursor:default;">🔵</span>`;
+            }
+
+            tbody.innerHTML += `
+                <tr style="${rowStyle}">
+                    <td><span class="viajante-tag" style="background-color:${col}">${v.nomeViajante}</span></td>
+                    <td>${v.regional}</td>
+                    <td>${coordTxt}</td>
+                    <td>${v.cidade}</td>
+                    <td>${formatarDataBR(v.dataInicio)}</td>
+                    <td>${formatarDataBR(v.dataFim)}</td>
+                    <td style="text-align: center; vertical-align: middle;">${statusHtml}</td>
+                    <td>
+                        <div class="actions-btn-group">
+                            <button class="btn-secondary" onclick="abrirModalEdicao(${v.idxOrig})">✏️</button>
+                            <button class="btn-danger" onclick="excluirViagem(${v.idxOrig})">🗑️</button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        });
+    }
+
+    function excluirViagem(i) {
+        if(confirm("Excluir esta viagem?")) {
+            viagens.splice(i, 1);
+            salvarLocalStorage();
+        }
+    }
+
+    function abrirModalEdicao(index) {
+        const v = viagens[index];
+        document.getElementById('editViagemIndex').value = index;
+        document.getElementById('editViagemNome').value = v.nomeViajante;
+        document.getElementById('editViagemCidade').value = v.cidade;
+        document.getElementById('editViagemInicio').value = v.dataInicio;
+        document.getElementById('editViagemFim').value = v.dataFim;
+        document.getElementById('modalEdicao').style.display = 'flex';
+    }
+    function fecharModal() { document.getElementById('modalEdicao').style.display = 'none'; }
+    function salvarModalEdicao() {
+        const index = document.getElementById('editViagemIndex').value;
+        viagens[index].cidade = document.getElementById('editViagemCidade').value;
+        viagens[index].dataInicio = document.getElementById('editViagemInicio').value;
+        viagens[index].dataFim = document.getElementById('editViagemFim').value;
+        fecharModal();
+        salvarLocalStorage();
+    }
+
+    function triggerCSVDownload(filename, csvContent) {
+        const blob = new Blob(["\ufeff" + csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement("a");
+        if (link.download !== undefined) {
+            const url = URL.createObjectURL(blob);
+            link.setAttribute("href", url);
+            link.setAttribute("download", filename);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    }
+
+    function exportarViajantesCSV() {
+        if(viajantes.length === 0) return alert("Não há viajantes.");
+        let csv = "Nome,Regional,Coordenador\n";
+        viajantes.forEach(v => {
+            csv += `"${v.nome.replace(/"/g, '""')}","${v.regional.replace(/"/g, '""')}","${(v.coordenador || "").replace(/"/g, '""')}"\n`;
+        });
+        triggerCSVDownload("banco_viajantes.csv", csv);
+    }
+
+    function exportarGerenteCSV() {
+        if(!gerenteGeral) return alert("Gerente Geral não definido.");
+        let csv = "Cargo,Nome\n";
+        csv += `"Gerente Geral","${gerenteGeral.replace(/"/g, '""')}"\n`;
+        triggerCSVDownload("banco_gerente.csv", csv);
+    }
+
+    function exportarCoordenadoresCSV() {
+        if(coordenadores.length === 0) return alert("Não há coordenadores.");
+        let csv = "Nome,Regional,Cor\n";
+        coordenadores.forEach(c => {
+            csv += `"${c.nome.replace(/"/g, '""')}","${c.regional.replace(/"/g, '""')}","${c.cor}"\n`;
+        });
+        triggerCSVDownload("banco_coordenadores.csv", csv);
+    }
+
+    function exportarRelatorioCSV() {
+        if(viagensFiltradasAtuais.length === 0) return alert("Sem dados no filtro.");
+        let csv = "Viajante,Regional,Coordenador,Cidade Destino,Data Inicio,Data Fim\n";
+        viagensFiltradasAtuais.forEach(v => {
+            csv += `"${v.nomeViajante.replace(/"/g, '""')}","${v.regional.replace(/"/g, '""')}","${v.coordenador.replace(/"/g, '""')}","${v.cidade.replace(/"/g, '""')}","${formatarDataBR(v.dataInicio)}","${formatarDataBR(v.dataFim)}"\n`;
+        });
+        triggerCSVDownload("banco_hospedagens_filtrado.csv", csv);
+    }
+
+    document.getElementById('excelFile').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if(!file) return;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, {type: 'array'});
+                const sheet = workbook.Sheets[workbook.SheetNames[0]];
+                const excelData = XLSX.utils.sheet_to_json(sheet);
+                let count = 0;
+                excelData.forEach(row => {
+                    let nome = row["Nome"] || row["nome"] || row["NOME"];
+                    let regional = row["Regional"] || row["regional"] || row["REGIONAL"];
+                    let coordenador = row["Coordenador"] || row["coordenador"] || row["COORDENADOR"] || "";
+                    if(nome && regional) {
+                        viajantes.push({
+                            nome: nome.toString().trim(),
+                            regional: regional.toString().trim(),
+                            coordenador: coordenador.toString().trim()
+                        });
+                        count++;
+                    }
+                });
+                if(count > 0) {
+                    salvarLocalStorage();
+                    alert(`${count} viajantes importados!`);
+                } else alert("Nenhum dado válido.");
+            } catch(err) { alert("Erro ao importar."); }
+        };
+        reader.readAsArrayBuffer(file);
+    });
+
+    document.getElementById('excelFileCoords').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if(!file) return;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, {type: 'array'});
+                const sheet = workbook.Sheets[workbook.SheetNames[0]];
+                const excelData = XLSX.utils.sheet_to_json(sheet);
+                let count = 0;
+                excelData.forEach(row => {
+                    let nome = row["Nome"] || row["nome"] || row["NOME"];
+                    let regional = row["Regional"] || row["regional"] || row["REGIONAL"];
+                    let cor = row["Cor"] || row["cor"] || row["COR"] || "#1e3a8a";
+                    
+                    if(nome && regional) {
+                        let regFormatada = regional.toString().trim();
+                        const regExiste = regionaisPadrao.find(r => r.toLowerCase() === regFormatada.toLowerCase());
+                        
+                        coordenadores.push({
+                            nome: nome.toString().trim(),
+                            regional: regExiste ? regExiste : regFormatada,
+                            cor: cor.toString().trim()
+                        });
+                        count++;
+                    }
+                });
+                if(count > 0) {
+                    salvarLocalStorage();
+                    atualizarCoordenadoresDropdownCadastro();
+                    alert(`${count} coordenadores importados com sucesso!`);
+                } else alert("Nenhum dado de coordenador válido encontrado.");
+            } catch(err) { alert("Erro ao importar coordenadores."); }
+        };
+        reader.readAsArrayBuffer(file);
+    });
+
+    function exportarRelatorio() {
+        if(viagensFiltradasAtuais.length === 0) return alert("Sem dados.");
+        const hoje = new Date(); hoje.setHours(0,0,0,0);
+        const statusLabel = { alerta: 'Em Alerta', atencao: 'Atenção', ok: 'OK', encerrado: 'Encerrado', ativo: 'Ativo' };
+        const dados = viagensFiltradasAtuais.map(v => ({
+            "Viajante": v.nomeViajante,
+            "Regional": v.regional,
+            "Coordenador": v.coordenador,
+            "Cidade": v.cidade,
+            "Início": formatarDataBR(v.dataInicio),
+            "Fim": formatarDataBR(v.dataFim),
+            "Status": statusLabel[calcularStatus(v, hoje)] || ""
+        }));
+        const ws = XLSX.utils.json_to_sheet(dados);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Hospedagens");
+        XLSX.writeFile(wb, "Relatorio_Hospedagem.xlsx");
+    }
+
+    // CANCELAMENTOS
+    function filtrarBuscaCancelViajante(termo) {
+        const div = document.getElementById('resultadosBuscaCancelViajante');
+        div.innerHTML = '';
+        if (!termo.trim()) { div.style.display = 'none'; return; }
+
+        const filtrados = viajantes.filter(v => v.nome.toLowerCase().includes(termo.toLowerCase()));
+
+        if (filtrados.length === 0) {
+            div.innerHTML = '<div class="search-item" style="color:red;">Nenhum viajante encontrado</div>';
+            div.style.display = 'block';
+            return;
+        }
+
+        filtrados.forEach(v => {
+            const item = document.createElement('div');
+            item.className = 'search-item';
+            item.innerHTML = `<strong>${v.nome}</strong> <small style="color:var(--text-light)">(${v.regional})</small>`;
+            item.onclick = () => {
+                document.getElementById('cancelViajanteInput').value = v.nome;
+                document.getElementById('cancelViajante').value = v.nome;
+                document.getElementById('cancelViajanteFeedback').textContent = `Selecionado: ${v.nome} (${v.regional})`;
+                document.getElementById('cancelResponsavel').value = v.coordenador || 'Sem coordenador';
+                div.style.display = 'none';
+            };
+            div.appendChild(item);
+        });
+        div.style.display = 'block';
+    }
+
+    function salvarCancelamento() {
+        const os         = document.getElementById('cancelOS').value.trim();
+        const viajante   = document.getElementById('cancelViajante').value;
+        const tipo       = document.getElementById('cancelTipo').value;
+        const status     = document.getElementById('cancelStatus').value;
+        const data       = document.getElementById('cancelData').value;
+        const obs        = document.getElementById('cancelObs').value.trim();
+        const responsavel= document.getElementById('cancelResponsavel').value.trim();
+
+        if (!os)       return alert('Informe o número da O.S.');
+        if (!viajante) return alert('Selecione o viajante.');
+        if (!data)     return alert('Informe a data do pedido.');
+
+        const registro = { os, viajante, tipo, status, data, obs, responsavel };
+
+        if (cancelIndexEdicao !== null) {
+            cancelamentos[cancelIndexEdicao] = registro;
+            cancelIndexEdicao = null;
+            document.getElementById('tituloCancelForm').textContent = '➕ Novo Pedido de Cancelamento';
+            document.getElementById('btnSalvarCancel').textContent = '💾 Salvar Cancelamento';
+        } else {
+            cancelamentos.push(registro);
+        }
+
+        localStorage.setItem('h_v9_cancelamentos', JSON.stringify(cancelamentos));
+        limparFormCancel();
+        renderizarCancelamentos();
+    }
+
+    function limparFormCancel() {
+        document.getElementById('cancelOS').value = '';
+        document.getElementById('cancelResponsavel').value = '';
+        document.getElementById('cancelViajanteInput').value = '';
+        document.getElementById('cancelViajante').value = '';
+        document.getElementById('cancelViajanteFeedback').textContent = '';
+        document.getElementById('resultadosBuscaCancelViajante').style.display = 'none';
+        document.getElementById('cancelTipo').value = 'Hospedagem';
+        document.getElementById('cancelStatus').value = 'Solicitado';
+        document.getElementById('cancelData').value = new Date().toISOString().split('T')[0];
+        document.getElementById('cancelObs').value = '';
+        cancelIndexEdicao = null;
+        document.getElementById('tituloCancelForm').textContent = '➕ Novo Pedido de Cancelamento';
+        document.getElementById('btnSalvarCancel').textContent = '💾 Salvar Cancelamento';
+    }
+
+    function editarCancelamento(idx) {
+        const c = cancelamentos[idx];
+        document.getElementById('cancelOS').value       = c.os;
+        document.getElementById('cancelResponsavel').value   = c.responsavel || '';
+        document.getElementById('cancelViajanteInput').value = c.viajante;
+        document.getElementById('cancelViajante').value      = c.viajante;
+        document.getElementById('cancelViajanteFeedback').textContent = `Selecionado: ${c.viajante}`;
+        document.getElementById('cancelTipo').value     = c.tipo;
+        document.getElementById('cancelStatus').value   = c.status;
+        document.getElementById('cancelData').value     = c.data;
+        document.getElementById('cancelObs').value      = c.obs || '';
+        cancelIndexEdicao = idx;
+        document.getElementById('tituloCancelForm').textContent = '✏️ Editando Cancelamento';
+        document.getElementById('btnSalvarCancel').textContent = '💾 Atualizar';
+        showTab('cancelamentosTab');
+        document.getElementById('cancelOS').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    function excluirCancelamento(idx) {
+        if (!confirm('Excluir este cancelamento?')) return;
+        cancelamentos.splice(idx, 1);
+        localStorage.setItem('h_v9_cancelamentos', JSON.stringify(cancelamentos));
+        renderizarCancelamentos();
+    }
+
+    function renderizarCancelamentos() {
+        const tbody = document.querySelector('#tabelaCancelamentos tbody');
+        tbody.innerHTML = '';
+
+        const fViajante    = (document.getElementById('filtroCancelViajante')?.value || '').toLowerCase().trim();
+        const fStatus      = document.getElementById('filtroCancelStatus')?.value || '';
+        const fTipo        = document.getElementById('filtroCancelTipo')?.value || '';
+        const fResponsavel = (document.getElementById('filtroCancelResponsavel')?.value || '').toLowerCase().trim();
+        const fData        = document.getElementById('filtroCancelData')?.value || '';
+
+        const filtrados = cancelamentos
+            .map((c, i) => ({ ...c, _idx: i }))
+            .filter(c => {
+                const mV = !fViajante    || c.viajante.toLowerCase().includes(fViajante);
+                const mS = !fStatus      || c.status === fStatus;
+                const mT = !fTipo        || c.tipo === fTipo;
+                const mR = !fResponsavel || (c.responsavel || '').toLowerCase().includes(fResponsavel);
+                const mD = !fData        || c.data >= fData;
+                return mV && mS && mT && mR && mD;
+            })
+            .sort((a, b) => b.data.localeCompare(a.data));
+
+        if (filtrados.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:var(--text-light);">Nenhum cancelamento encontrado.</td></tr>`;
+            return;
+        }
+
+        const statusMap = {
+            'Solicitado':    ['cancel-badge cancel-solicitado', 'Solicitado'],
+            'Efetivado':     ['cancel-badge cancel-efetivado',  'Efetivado'],
+            'Não Efetivado': ['cancel-badge cancel-nao',        'Não Efetivado'],
+            'No-Show':       ['cancel-badge cancel-noshow',     'No-Show']
+        };
+
+        filtrados.forEach(c => {
+            const [cls, label] = statusMap[c.status] || ['cancel-badge', c.status];
+            const dataFmt = c.data ? c.data.split('-').reverse().join('/') : '-';
+            const obsHtml = c.obs
+                ? `<span class="obs-cell" title="${c.obs.replace(/"/g,"'")}">📝 ${c.obs}</span>`
+                : '<span style="color:var(--text-light); font-style:italic;">—</span>';
+
+            tbody.innerHTML += `
+                <tr>
+                    <td style="white-space:nowrap;"><strong>${c.os}</strong></td>
+                    <td style="white-space:nowrap;">${c.viajante}</td>
+                    <td style="white-space:nowrap;"><span style="font-size:12px; background:#e2e8f0; padding:2px 8px; border-radius:10px;">${c.tipo}</span></td>
+                    <td style="white-space:nowrap;">${c.responsavel || '<span style="color:var(--text-light);font-style:italic;">—</span>'}</td>
+                    <td style="white-space:nowrap;">${dataFmt}</td>
+                    <td style="white-space:nowrap;"><span class="${cls}">${label}</span></td>
+                    <td>${obsHtml}</td>
+                    <td style="white-space:nowrap;">
+                        <div class="actions-btn-group">
+                            <button class="btn-secondary" onclick="editarCancelamento(${c._idx})">✏️</button>
+                            <button class="btn-danger" onclick="excluirCancelamento(${c._idx})">🗑️</button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        });
+    }
+
+    function exportarCancelamentosExcel() {
+        const fViajante    = (document.getElementById('filtroCancelViajante')?.value || '').toLowerCase().trim();
+        const fStatus      = document.getElementById('filtroCancelStatus')?.value || '';
+        const fTipo        = document.getElementById('filtroCancelTipo')?.value || '';
+        const fResponsavel = (document.getElementById('filtroCancelResponsavel')?.value || '').toLowerCase().trim();
+        const fData        = document.getElementById('filtroCancelData')?.value || '';
+
+        const filtrados = cancelamentos.filter(c => {
+            const mV = !fViajante    || c.viajante.toLowerCase().includes(fViajante);
+            const mS = !fStatus      || c.status === fStatus;
+            const mT = !fTipo        || c.tipo === fTipo;
+            const mR = !fResponsavel || (c.responsavel || '').toLowerCase().includes(fResponsavel);
+            const mD = !fData        || c.data >= fData;
+            return mV && mS && mT && mR && mD;
+        }).sort((a, b) => b.data.localeCompare(a.data));
+
+        if(filtrados.length === 0) return alert("Sem dados no filtro para exportar.");
+
+        const dados = filtrados.map(c => ({
+            "O.S": c.os,
+            "Viajante": c.viajante,
+            "Tipo": c.tipo,
+            "Responsável": c.responsavel || "-",
+            "Data": c.data ? c.data.split('-').reverse().join('/') : '-',
+            "Status": c.status,
+            "Observação": c.obs || "-"
+        }));
+
+        const ws = XLSX.utils.json_to_sheet(dados);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Cancelamentos");
+        XLSX.writeFile(wb, "Relatorio_Cancelamentos.xlsx");
+    }
+
+    async function exportarCancelamentosPDF() {
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+
+        const pageW = pdf.internal.pageSize.getWidth();
+        const pageH = pdf.internal.pageSize.getHeight();
+        const margin = 14;
+        const hoje = new Date().toLocaleDateString('pt-BR');
+
+        pdf.setFillColor(30, 58, 138);
+        pdf.rect(0, 0, pageW, 22, 'F');
+        pdf.setTextColor(255, 255, 255);
+        pdf.setFontSize(14);
+        pdf.setFont('helvetica', 'bold');
+        pdf.text('Extrato de Cancelamentos', margin, 14);
+        pdf.setFontSize(9);
+        pdf.setFont('helvetica', 'normal');
+        pdf.text('Gerado em ' + hoje, pageW - margin, 14, { align: 'right' });
+
+        const total    = cancelamentos.length;
+        const solicit  = cancelamentos.filter(c => c.status === 'Solicitado').length;
+        const efet     = cancelamentos.filter(c => c.status === 'Efetivado').length;
+        const naoEfet  = cancelamentos.filter(c => c.status === 'Não Efetivado').length;
+        const noshow   = cancelamentos.filter(c => c.status === 'No-Show').length;
+
+        let sy = 32;
+        pdf.setFillColor(241, 245, 249);
+        pdf.roundedRect(margin, sy - 6, pageW - margin * 2, 12, 2, 2, 'F');
+        pdf.setTextColor(50, 50, 50);
+        pdf.setFontSize(9);
+        pdf.setFont('helvetica', 'normal');
+        pdf.text(
+            `Total: ${total}   Solicitados: ${solicit}   Efetivados: ${efet}   Nao Efetivados: ${naoEfet}   No-Show: ${noshow}`,
+            margin + 4, sy + 1
+        );
+
+        const colW    = [25, 45, 22, 35, 22, 25, 95];
+        const headers = ['O.S', 'Viajante', 'Tipo', 'Responsavel', 'Data', 'Status', 'Observacao'];
+        let y = sy + 16;
+
+        pdf.setFillColor(30, 58, 138);
+        pdf.rect(margin, y - 5, pageW - margin * 2, 8, 'F');
+        pdf.setTextColor(255, 255, 255);
+        pdf.setFont('helvetica', 'bold');
+        pdf.setFontSize(8.5);
+        let x = margin + 2;
+        headers.forEach((h, i) => { pdf.text(h, x, y); x += colW[i]; });
+        y += 5;
+
+        const statusColors = {
+            'Solicitado':    [153, 103, 0],
+            'Efetivado':     [22, 101, 52],
+            'Nao Efetivado': [153, 27, 27],
+            'Não Efetivado': [153, 27, 27],
+            'No-Show':       [109, 40, 217]
+        };
+
+        const fViajante    = (document.getElementById('filtroCancelViajante')?.value || '').toLowerCase().trim();
+        const fStatus      = document.getElementById('filtroCancelStatus')?.value || '';
+        const fTipo        = document.getElementById('filtroCancelTipo')?.value || '';
+        const fResponsavel = (document.getElementById('filtroCancelResponsavel')?.value || '').toLowerCase().trim();
+        const fData        = document.getElementById('filtroCancelData')?.value || '';
+
+        const dados = cancelamentos.filter(c => {
+            const mV = !fViajante    || c.viajante.toLowerCase().includes(fViajante);
+            const mS = !fStatus      || c.status === fStatus;
+            const mT = !fTipo        || c.tipo === fTipo;
+            const mR = !fResponsavel || (c.responsavel || '').toLowerCase().includes(fResponsavel);
+            const mD = !fData        || c.data >= fData;
+            return mV && mS && mT && mR && mD;
+        }).sort((a, b) => b.data.localeCompare(a.data));
+
+        dados.forEach((c, idx) => {
+            const dataFmt    = c.data ? c.data.split('-').reverse().join('/') : '-';
+            const obs        = c.obs ? c.obs : '-'; 
+            const responsavel= c.responsavel || '-';
+            const limpar = str => String(str || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^\x00-\x7F]/g, '');
+            const cols = [c.os, c.viajante, c.tipo, responsavel, dataFmt, c.status, obs].map(limpar);
+
+            let maxLines = 1;
+            const textLines = cols.map((val, i) => {
+                const lines = pdf.splitTextToSize(val, colW[i] - 2);
+                if (lines.length > maxLines) maxLines = lines.length;
+                return lines;
+            });
+
+            const rowHeight = (maxLines * 4) + 4;
+
+            if (y + rowHeight > pageH - 15) {
+                pdf.addPage();
+                y = 20;
+            }
+
+            const bg = idx % 2 === 0 ? [255,255,255] : [248,250,252];
+            pdf.setFillColor(...bg);
+            pdf.rect(margin, y - 4, pageW - margin * 2, rowHeight, 'F');
+
+            x = margin + 2;
+            textLines.forEach((lines, i) => {
+                if (i === 5) {
+                    const cor = statusColors[c.status] || [50,50,50];
+                    pdf.setTextColor(...cor);
+                    pdf.setFont('helvetica', 'bold');
+                } else {
+                    pdf.setTextColor(50, 50, 50);
+                    pdf.setFont('helvetica', 'normal');
+                }
+                pdf.setFontSize(8);
+                pdf.text(lines, x, y);
+                x += colW[i];
+            });
+            y += rowHeight;
+        });
+
+        pdf.setTextColor(160, 160, 160);
+        pdf.setFontSize(7.5);
+        pdf.setFont('helvetica', 'normal');
+        pdf.text('Controle de Hospedagem - Extrato de Cancelamentos  |  ' + hoje, pageW / 2, pageH - 5, { align: 'center' });
+
+        pdf.save('Extrato_Cancelamentos.pdf');
+    }
+
+    async function exportarRelatorioPDF() {
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+
+        const pageW = pdf.internal.pageSize.getWidth();
+        const pageH = pdf.internal.pageSize.getHeight();
+        const margin = 14;
+        const hoje = new Date().toLocaleDateString('pt-BR');
+        const limpar = str => String(str || '-').normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^\x00-\x7F]/g, '');
+
+        pdf.setFillColor(30, 58, 138);
+        pdf.rect(0, 0, pageW, 22, 'F');
+        pdf.setTextColor(255, 255, 255);
+        pdf.setFontSize(14);
+        pdf.setFont('helvetica', 'bold');
+        pdf.text('Relatorio Geral de Hospedagens', margin, 14);
+        pdf.setFontSize(9);
+        pdf.setFont('helvetica', 'normal');
+        pdf.text('Gerado em ' + hoje, pageW - margin, 14, { align: 'right' });
+
+        const dadosFiltrados = viagensFiltradasAtuais.length > 0 ? viagensFiltradasAtuais : viagens.map((v,i) => ({...v, idxOrig: i}));
+        const hojeDt = new Date(); hojeDt.setHours(0,0,0,0);
+        const totAlerta    = dadosFiltrados.filter(v => calcularStatus(v, hojeDt) === 'alerta').length;
+        const totAtencao   = dadosFiltrados.filter(v => calcularStatus(v, hojeDt) === 'atencao').length;
+        const totOk        = dadosFiltrados.filter(v => calcularStatus(v, hojeDt) === 'ok').length;
+        const totEncerrado = dadosFiltrados.filter(v => calcularStatus(v, hojeDt) === 'encerrado').length;
+        const totAtivo     = dadosFiltrados.filter(v => calcularStatus(v, hojeDt) === 'ativo').length;
+
+        let sy = 32;
+        pdf.setFillColor(241, 245, 249);
+        pdf.roundedRect(margin, sy - 6, pageW - margin * 2, 12, 2, 2, 'F');
+        pdf.setTextColor(50, 50, 50);
+        pdf.setFontSize(9);
+        pdf.setFont('helvetica', 'normal');
+        pdf.text(
+            `Total: ${dadosFiltrados.length}   Ativos: ${totAtivo}   Alerta: ${totAlerta}   Atencao: ${totAtencao}   OK: ${totOk}   Encerrados: ${totEncerrado}`,
+            margin + 4, sy + 1
+        );
+
+        const colW    = [48, 32, 40, 45, 25, 25, 34];
+        const headers = ['Viajante', 'Regional', 'Coordenador', 'Cidade', 'Inicio', 'Fim', 'Status'];
+        let y = sy + 16;
+
+        pdf.setFillColor(30, 58, 138);
+        pdf.rect(margin, y - 5, pageW - margin * 2, 8, 'F');
+        pdf.setTextColor(255, 255, 255);
+        pdf.setFont('helvetica', 'bold');
+        pdf.setFontSize(8.5);
+        let x = margin + 2;
+        headers.forEach((h, i) => { pdf.text(h, x, y); x += colW[i]; });
+        y += 5;
+
+        const statusLabel = { alerta: 'Em Alerta', atencao: 'Atencao', ok: 'OK', encerrado: 'Encerrado', ativo: 'Ativo' };
+        const statusColors = {
+            alerta:     [153, 27, 27],
+            atencao:    [161, 98, 7],
+            ok:         [22, 101, 52],
+            encerrado:  [80, 80, 80],
+            ativo:      [30, 58, 138]
+        };
+
+        const sorted = [...dadosFiltrados].sort((a,b) => new Date(b.dataInicio) - new Date(a.dataInicio));
+
+        sorted.forEach((v, idx) => {
+            const status = calcularStatus(v, hojeDt);
+            const cols = [
+                v.nomeViajante,
+                v.regional,
+                v.coordenador || '-',
+                v.cidade,
+                v.dataInicio ? v.dataInicio.split('-').reverse().join('/') : '-',
+                v.dataFim    ? v.dataFim.split('-').reverse().join('/')    : '-',
+                statusLabel[status] || status
+            ].map(limpar);
+
+            let maxLines = 1;
+            const textLines = cols.map((val, i) => {
+                const lines = pdf.splitTextToSize(val, colW[i] - 2);
+                if (lines.length > maxLines) maxLines = lines.length;
+                return lines;
+            });
+
+            const rowHeight = (maxLines * 4) + 4;
+
+            if (y + rowHeight > pageH - 15) {
+                pdf.addPage();
+                y = 20;
+            }
+
+            const bg = idx % 2 === 0 ? [255,255,255] : [248,250,252];
+            pdf.setFillColor(...bg);
+            pdf.rect(margin, y - 4, pageW - margin * 2, rowHeight, 'F');
+
+            x = margin + 2;
+            textLines.forEach((lines, i) => {
+                if (i === 6) {
+                    pdf.setTextColor(...(statusColors[status] || [50,50,50]));
+                    pdf.setFont('helvetica', 'bold');
+                } else {
+                    pdf.setTextColor(50, 50, 50);
+                    pdf.setFont('helvetica', 'normal');
+                }
+                pdf.setFontSize(8);
+                pdf.text(lines, x, y);
+                x += colW[i];
+            });
+            y += rowHeight;
+        });
+
+        pdf.setTextColor(160, 160, 160);
+        pdf.setFontSize(7.5);
+        pdf.setFont('helvetica', 'normal');
+        pdf.text('Controle de Hospedagem - Relatorio Geral  |  ' + hoje, pageW / 2, pageH - 5, { align: 'center' });
+
+        pdf.save('Relatorio_Hospedagens.pdf');
+    }
+
+    init();
+</script>
+</body>
+</html>

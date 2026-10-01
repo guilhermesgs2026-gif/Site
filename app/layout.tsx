@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { IBM_Plex_Sans, IBM_Plex_Mono, Archivo_Black } from "next/font/google";
 import "./globals.css";
 import { MotionProvider } from "@/components/motion-provider";
+import { Carregamento } from "@/components/carregamento";
 
 const plexSans = IBM_Plex_Sans({
   variable: "--font-plex-sans",
@@ -46,6 +47,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${plexSans.variable} ${plexMono.variable} ${archivo.variable} h-full antialiased`}
     >
       <body className="apt-grao min-h-full flex flex-col">
+        <Carregamento />
         <MotionProvider>{children}</MotionProvider>
       </body>
     </html>
