@@ -89,8 +89,9 @@ const PROJETOS: Projeto[] = [
   {
     n: "07",
     nome: "Slides para vídeo",
-    desc: "Transforma uma apresentação de PowerPoint em vídeo narrado, com vozes em português. Adaptamos uma ferramenta de código aberto e demos a ela uma janela simples de usar.",
+    desc: "Transforma uma apresentação de PowerPoint em vídeo narrado em português, com voz pronta ou clonada de uma gravação sua. Adaptamos uma ferramenta de código aberto e demos a ela uma janela simples de usar.",
     area: "Treinamento · Python",
+    img: "/img/projetos/slides-video.jpg",
     onde: "Aplicativo de desktop · Windows",
   },
   {
