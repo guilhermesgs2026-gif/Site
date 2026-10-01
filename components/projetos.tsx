@@ -48,7 +48,7 @@ const PROJETOS: Projeto[] = [
   {
     n: "02",
     nome: "Painel SGI",
-    desc: "Painel de indicadores do sistema de gestão integrado, com acesso por login para cada equipe.",
+    desc: "Indicadores de segurança, qualidade e gestão a partir das inspeções de campo: contratadas, desvios, equipes e locais, com filtros por período e regional. Gráficos saem em imagem e o relatório sai pronto em apresentação.",
     area: "Gestão · Indicadores",
     img: "/img/projetos/sgi.jpg",
     href: "https://dashapt.vercel.app/",
