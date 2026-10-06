@@ -31,10 +31,10 @@ const plexMono = IBM_Plex_Mono({
 export const metadata: Metadata = {
   title: "APT — Automations Partner Team",
   description:
-    "Automatizamos o processo e capacitamos o time a manter e evoluir sozinho. Melhoria contínua, qualidade e automação para PMEs e indústrias.",
+    "Um grupo que automatiza o trabalho de dentro da operação. Conheça o nosso método, a nossa ética de trabalho e as ferramentas que já estão rodando.",
   openGraph: {
     title: "APT — Automations Partner Team",
-    description: "Melhoria que continua sem a gente.",
+    description: "Automação feita de dentro da operação, e deixada rodando.",
     locale: "pt_BR",
     type: "website",
   },

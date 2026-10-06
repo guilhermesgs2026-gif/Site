@@ -163,7 +163,7 @@ export function Roadmap() {
           é o assunto. */}
       <Ambiente canto="direita-baixo" forca={0.025} />
       <div className="mx-auto w-full max-w-7xl px-6">
-        <p className="apt-label text-[var(--apt-cobre)]">O método</p>
+        <p className="apt-label text-[var(--apt-cobre)]">Nosso método</p>
         <h2 className="apt-display apt-d3 mt-4 max-w-2xl">
           Cinco estágios. O último não é nosso.
         </h2>

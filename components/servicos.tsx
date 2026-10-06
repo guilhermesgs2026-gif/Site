@@ -21,27 +21,27 @@ import { Ambiente } from "@/components/ambiente";
 const PORTAS = [
   {
     n: "01",
-    nome: "Consultoria e implantação",
-    desc: "Diagnóstico onde o trabalho acontece, desenho do processo e a automação entregue rodando.",
-    para: "Projeto com início e fim. Para quem tem um gargalo nomeado.",
+    nome: "Automação de rotina",
+    desc: "Formulário de campo que vira relatório, ficha, planilha ou apresentação no padrão certo, sem ninguém redigitar nada.",
+    para: "Foi assim com o RNC Online, o Gerador de FD e o RSF.",
   },
   {
     n: "02",
-    nome: "Parceria contínua",
-    desc: "Um time de melhoria contínua acoplado à sua operação, mês a mês. É o que a palavra Partner no nome promete.",
-    para: "Para quem tem mais processo do que braço para cuidar.",
+    nome: "Painéis e indicadores",
+    desc: "Dado espalhado em planilha vira painel com filtro, gráfico e relatório pronto para apresentar.",
+    para: "Foi assim com o Painel SGI.",
   },
   {
     n: "03",
-    nome: "Treinamento e cultura",
-    desc: "Formamos o seu time para automatizar e melhorar por conta própria.",
-    para: "Para quem quer a capacidade dentro de casa.",
+    nome: "Ferramentas para o time",
+    desc: "Upload automático de fichas, alocação de equipes por distância, controle de hospedagem e vídeo de treinamento feito a partir de slides.",
+    para: "Cada uma resolveu um problema que a gente mesmo tinha.",
   },
   {
     n: "04",
     nome: "O que não fazemos",
-    desc: "Não vendemos selo sem mudança de processo, não competimos por preço de hora e não temos produto próprio para empurrar.",
-    para: "Dizer não faz parte do serviço.",
+    desc: "Não fazemos sistema para enfeitar processo ruim, não deixamos ninguém preso à nossa ferramenta e não contamos resultado que não medimos.",
+    para: "Saber dizer não também é método.",
     limite: true,
   },
 ];
@@ -91,16 +91,15 @@ export function Servicos() {
       <div className="mx-auto grid max-w-7xl gap-x-16 px-6 py-24 lg:grid-cols-[minmax(0,20rem)_1fr] sm:py-32">
         {/* Coluna presa: diz onde a pessoa está sem precisar de barra. */}
         <div className="lg:sticky lg:top-32 lg:self-start">
-          <p className="apt-label text-[var(--apt-cobre)]">Serviços</p>
+          <p className="apt-label text-[var(--apt-cobre)]">O que a gente faz</p>
           <h2 className="apt-display apt-d3 mt-5">
-            Três portas,
+            O que a gente
             <br />
-            uma tese
+            sabe fazer
           </h2>
           <p className="mt-7 max-w-sm text-[15px] leading-relaxed text-apt-concreto/70">
-            A mesma ideia em três estágios de maturidade. Você sobe a escada
-            conforme faz sentido — não existe degrau em que a gente precise que
-            você fique preso.
+            Nada nesta lista é promessa. Tudo aqui a gente já fez pelo menos uma
+            vez, e está rodando.
           </p>
 
           {/* Indicador de progresso: uma barra por serviço, a do atual acesa. */}

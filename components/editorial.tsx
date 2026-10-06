@@ -103,9 +103,9 @@ export function HeroEditorial() {
                 transition={{ duration: 0.8, delay: 0.3, ease: EASE }}
                 className="max-w-xl text-lg font-medium leading-[1.3] tracking-[-0.01em] sm:text-2xl"
               >
-                Melhoria contínua, qualidade e automação{" "}
+                Um grupo que automatiza o trabalho de dentro da operação{" "}
                 <span className="text-[var(--apt-cobre)]">
-                  que continuam sem a gente.
+                  e deixa tudo rodando.
                 </span>
               </motion.p>
             </div>
@@ -117,16 +117,16 @@ export function HeroEditorial() {
               className="flex flex-wrap items-center gap-3"
             >
               <a
-                href="#contato"
+                href="#projetos"
                 className="apt-press bg-[var(--apt-cobre)] px-7 py-4 text-sm font-semibold uppercase tracking-[0.08em] text-[var(--apt-vazio)] hover:bg-[var(--apt-cobre-claro)]"
               >
-                Conversar sobre um processo
+                Ver o que já fizemos
               </a>
               <a
                 href="#metodo"
                 className="apt-press border border-[var(--apt-fio)] px-7 py-4 text-sm font-medium uppercase tracking-[0.08em] text-apt-concreto/85 hover:border-apt-concreto/45"
               >
-                Ver o método
+                Como a gente trabalha
               </a>
             </motion.div>
           </div>
@@ -148,7 +148,7 @@ export function Manifesto() {
     <section className="relative overflow-hidden border-y border-border bg-[var(--apt-sup1)]">
       <Ambiente canto="direita" forca={0.035} />
       <div className="relative mx-auto max-w-7xl px-6 py-28 sm:py-40">
-        <p className="apt-label mb-10 text-[var(--apt-laranja)]">A tese</p>
+        <p className="apt-label mb-10 text-[var(--apt-laranja)]">No que a gente acredita</p>
         {/* Entrada palavra a palavra: o olho lê a frase na ordem em que ela
             aparece, o que dá peso à segunda metade — que é o argumento. */}
         <h2 className="apt-display apt-d2 max-w-5xl">
@@ -167,10 +167,9 @@ export function Manifesto() {
         </h2>
         <Reveal delay={0.2}>
           <p className="mt-10 max-w-2xl text-[15px] leading-relaxed text-apt-concreto/70">
-            O mercado vende sistema para quem não mudou o processo, e manual de
-            qualidade para quem não tem quem sustente o método. Em ambos os casos
-            alguém entrega, emite a nota e vai embora — e seis meses depois tudo
-            voltou a ser o que era.
+            Por isso a gente não entrega uma ferramenta e some. Tudo o que
+            fizemos nasceu de um problema que a gente mesmo tinha no trabalho,
+            foi usado todo dia por quem precisava dele e continua rodando.
           </p>
         </Reveal>
       </div>
@@ -195,16 +194,17 @@ export function PainelNoChao() {
 
         <div>
           <Reveal>
-            <p className="apt-label text-[var(--apt-laranja)]">Onde a gente entra</p>
+            <p className="apt-label text-[var(--apt-laranja)]">Como a gente trabalha</p>
             <h2 className="apt-display apt-d3 mt-5 max-w-xl">
               Diagnóstico se faz no chão, com quem executa.
             </h2>
           </Reveal>
           <Reveal delay={0.1}>
             <p className="mt-7 max-w-xl text-base leading-relaxed text-apt-concreto/75">
-              Não em sala de reunião com quem descreve o processo. A gente vai
-              até onde o trabalho acontece, mede como está hoje e só então mexe
-              em alguma coisa. Sem linha de base, qualquer ganho depois é
+              Nenhuma ferramenta nossa saiu de sala de reunião. A gente olha o
+              trabalho sendo feito, com quem preenche o relatório, sobe a ficha
+              e monta a equipe. Mede como está hoje e só então mexe. Sem essa
+              medida, qualquer ganho que a gente contasse depois seria
               opinião.
             </p>
           </Reveal>
@@ -266,7 +266,7 @@ export function FundadoresEditorial() {
     <section id="fundadores" className="border-t border-border">
       <div className="mx-auto max-w-7xl px-6 py-24 sm:py-32">
         <Reveal>
-          <p className="apt-label text-[var(--apt-laranja)]">Fundadores</p>
+          <p className="apt-label text-[var(--apt-laranja)]">Quem somos</p>
           <h2 className="apt-display apt-d3 mt-5 max-w-3xl">
             Três pessoas que já foram o funcionário que enxergava o desperdício.
           </h2>
@@ -277,14 +277,14 @@ export function FundadoresEditorial() {
             <p className="max-w-xl text-base leading-relaxed text-apt-concreto/75">
               Em quase toda empresa existe alguém que faz o trabalho, enxerga o
               que está errado e sabe como resolver. Quase sempre essa pessoa leva
-              a ideia adiante e a ideia morre — por prioridade, por orçamento, por
+              a ideia adiante e a ideia morre: por prioridade, por orçamento, por
               &ldquo;agora não é o momento&rdquo;.
             </p>
             <p className="max-w-xl text-base leading-relaxed text-apt-concreto/75">
-              Depois de algumas mortes, ela para de levar ideia. Continua vendo o
-              desperdício, mas cala.{" "}
+              A gente parou de esperar a ideia ser aprovada e começou a
+              construir.{" "}
               <span className="text-apt-concreto">
-                A APT existe para que esse caminho tenha para onde ir.
+                A APT é o nome que demos a isso.
               </span>
             </p>
           </div>
@@ -320,11 +320,12 @@ export function ContatoEditorial() {
             <Reveal>
               <p className="apt-label text-[var(--apt-laranja)]">Contato</p>
               <h2 className="apt-display apt-d2 mt-5 max-w-2xl">
-                Uma conversa sobre um processo que está doendo.
+                Gosta de trabalho bem feito? A gente também.
               </h2>
               <p className="mt-7 max-w-xl text-base leading-relaxed text-apt-concreto/80">
-                Sem proposta pronta e sem diagnóstico por telefone. A gente ouve o
-                processo, diz se é caso para a APT — e diz também quando não é.
+                Se você viu aqui alguma coisa que conversa com o seu dia a dia,
+                ou só quer saber como a gente fez, chama. Falar de processo é a
+                parte do trabalho que a gente mais gosta.
               </p>
             </Reveal>
             <Reveal delay={0.12}>

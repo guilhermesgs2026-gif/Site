@@ -98,10 +98,10 @@ function Secao({
 /* -------------------------------------------------------------------------- */
 
 const NAV = [
-  { href: "#no-chao", label: "O método" },
-  { href: "#filosofia", label: "Filosofia" },
-  { href: "#servicos", label: "Serviços" },
-  { href: "#fundadores", label: "Fundadores" },
+  { href: "#no-chao", label: "Método" },
+  { href: "#filosofia", label: "Ética" },
+  { href: "#servicos", label: "O que fazemos" },
+  { href: "#fundadores", label: "Quem somos" },
   { href: "#projetos", label: "Projetos" },
 ];
 
@@ -141,27 +141,27 @@ const VALORES = [
   {
     n: "01",
     t: "Transferir, não reter",
-    d: "Sucesso é o cliente não precisar mais da gente naquele processo. Contrato que só se sustenta porque ninguém aprendeu a operar é fracasso, mesmo faturando.",
+    d: "Uma ferramenta nossa deu certo quando quem usa não precisa mais da gente para operar. Se só funciona com a gente do lado, está mal feita.",
   },
   {
     n: "02",
     t: "Ir onde o trabalho acontece",
-    d: "Diagnóstico se faz no chão, com quem executa — não em sala de reunião com quem descreve.",
+    d: "Diagnóstico se faz no chão, com quem executa, e não em sala de reunião com quem descreve.",
   },
   {
     n: "03",
     t: "Autonomia de quem opera",
-    d: "Quem faz o trabalho é quem melhor sabe melhorá-lo. Nosso papel é dar ferramenta, método e espaço.",
+    d: "Quem faz o trabalho é quem melhor sabe melhorá-lo. A gente sabe disso porque é exatamente quem faz o trabalho.",
   },
   {
     n: "04",
     t: "Medir antes de afirmar",
-    d: "Sem número antes e depois, é opinião. A medição abre e fecha todo projeto.",
+    d: "Sem número de antes e de depois, é opinião. A gente prefere não falar do que falar sem medir.",
   },
   {
     n: "05",
     t: "Simples que roda",
-    d: "Processo que a equipe mantém vale mais que o processo perfeito que ninguém segue.",
+    d: "Processo que a equipe mantém vale mais que o processo perfeito que ninguém segue. Por isso as ferramentas saem com manual e com o Apto explicando cada tela.",
   },
 ];
 
@@ -171,8 +171,8 @@ export function Filosofia() {
       id="filosofia"
       tom="fundo"
       ambiente={{ canto: "esquerda-baixo" }}
-      rotulo="Filosofia"
-      titulo="Cinco princípios que decidem o que a gente aceita fazer."
+      rotulo="Ética de trabalho"
+      titulo="Cinco regras que a gente não quebra."
     >
       <ul className="divide-y divide-border border-y border-border">
         {VALORES.map((v, i) => (
@@ -199,20 +199,20 @@ export function Filosofia() {
 
 const RECUSAS = [
   {
-    t: "Não somos para quem quer só o selo.",
-    d: "Se o que você precisa é o certificado para a auditoria sem mexer no processo, uma consultoria de conformidade resolve melhor e mais barato.",
+    t: "Não prendemos ninguém.",
+    d: "Ferramenta que só funciona enquanto a gente estiver por perto é ferramenta mal feita.",
   },
   {
-    t: "Não competimos por preço de hora.",
-    d: "Quem decide pelo menor valor de hora está comprando ferramenta. A gente entrega capacidade instalada.",
+    t: "Não construímos por construir.",
+    d: "Tudo começa de um problema que alguém sente no dia a dia, e não de uma tecnologia que a gente quer testar.",
   },
   {
-    t: "Não vendemos dependência.",
-    d: "Contrato que só se sustenta porque o cliente nunca aprendeu a operar é fracasso.",
+    t: "Não ficamos com mérito dos outros.",
+    d: "Quando partimos de algo que já existia, a gente diz. O Slides para vídeo é adaptação de uma ferramenta de código aberto, e está escrito assim.",
   },
   {
-    t: "Não somos software house.",
-    d: "Não viramos fábrica de demanda de sistema e não temos produto próprio para empurrar.",
+    t: "Não largamos pela metade.",
+    d: "Ferramenta nossa sai rodando, com manual e com quem usa sabendo usar. Protótipo bonito que ninguém usa não conta.",
   },
 ];
 
@@ -222,8 +222,8 @@ export function Limites() {
       id="limites"
       tom="fundo"
       ambiente={{ canto: "direita-baixo", tom: "cobre" }}
-      rotulo="Os limites"
-      titulo="O que a APT se recusa a ser."
+      rotulo="Compromissos"
+      titulo="Do que a gente não abre mão."
     >
       <div className="grid gap-x-12 gap-y-9 sm:grid-cols-2">
         {RECUSAS.map((r, i) => (
@@ -236,18 +236,19 @@ export function Limites() {
         ))}
       </div>
 
-      {/* Empresa nova que não inventa número é a coisa mais difícil de imitar
-          que existe — e é a regra do próprio brand book. */}
+      {/* Grupo novo que não inventa número é a coisa mais difícil de imitar
+          que existe, e é a regra do próprio brand book. */}
       <Reveal delay={0.24}>
         <div className="mt-14 border border-border bg-[var(--apt-grafite)] p-8">
           <p className="apt-label text-muted-foreground">Sobre números</p>
           <p className="mt-4 max-w-3xl text-lg font-medium leading-snug sm:text-xl">
-            A APT é nova. Não temos caso publicado ainda — e não vamos inventar
-            porcentagem para preencher esta página.
+            Ainda não publicamos nenhum resultado com número. E não vamos
+            inventar porcentagem para preencher esta página.
           </p>
           <p className="mt-4 max-w-3xl text-[15px] leading-relaxed text-apt-concreto/70">
-            Quando o primeiro número for real, ele aparece aqui com o cliente, o
-            processo e o método de medição junto.
+            As ferramentas estão em uso. Quando a medição de antes e depois
+            estiver feita, o número aparece aqui com o processo e o método de
+            medição junto.
           </p>
         </div>
       </Reveal>
@@ -269,7 +270,7 @@ export function Rodape() {
           </div>
         </div>
         <p className="max-w-xs text-sm text-muted-foreground">
-          Melhoria contínua, qualidade e automação para PMEs e indústrias.
+          Automação e melhoria contínua, feitas por quem está dentro da operação.
         </p>
       </div>
     </footer>

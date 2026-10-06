@@ -58,7 +58,7 @@ const PROJETOS: Projeto[] = [
   {
     n: "03",
     nome: "Gerador de FD",
-    desc: "Monta a ficha de troca de equipamento — o que saiu, o que entrou, dados técnicos e fotos — já com o nome de arquivo no padrão.",
+    desc: "Monta a ficha de troca de equipamento, com o que saiu, o que entrou, os dados técnicos e as fotos, já com o nome de arquivo no padrão.",
     area: "Ativos · Subestações",
     img: "/img/projetos/fd.jpg",
     href: "https://gerador-fd.vercel.app/",
@@ -169,7 +169,7 @@ function Item({ p }: { p: Projeto }) {
             className="group text-sm text-[var(--apt-laranja)]"
           >
             {p.restrito
-              ? "Acesso restrito — ver tela de entrada"
+              ? "Acesso restrito: ver a tela de entrada"
               : p.demo
                 ? "Abrir demonstração (sem dados)"
                 : "Abrir o aplicativo"}{" "}
