@@ -141,7 +141,7 @@ export function HeroEditorial() {
 /** Faixa de declaração: tipo grande sobre fundo liso, entre dois blocos de foto. */
 export function Manifesto() {
   const frase =
-    "Ferramenta resolve metade. A outra metade é gente capaz de sustentar.";
+    "A gente vê o problema, constrói a solução e deixa ela rodando.";
   const palavras = frase.split(" ");
 
   return (
@@ -167,9 +167,10 @@ export function Manifesto() {
         </h2>
         <Reveal delay={0.2}>
           <p className="mt-10 max-w-2xl text-[15px] leading-relaxed text-apt-concreto/70">
-            Por isso a gente não entrega uma ferramenta e some. Tudo o que
-            fizemos nasceu de um problema que a gente mesmo tinha no trabalho,
-            foi usado todo dia por quem precisava dele e continua rodando.
+            Tudo o que está nesta página foi feito por nós, além do trabalho do
+            dia a dia, sem verba e sem apoio. Ninguém precisou cobrar. A gente
+            enxergou o retrabalho, resolveu e continua cuidando para que as
+            ferramentas sigam em uso.
           </p>
         </Reveal>
       </div>
@@ -196,24 +197,24 @@ export function PainelNoChao() {
           <Reveal>
             <p className="apt-label text-[var(--apt-laranja)]">Como a gente trabalha</p>
             <h2 className="apt-display apt-d3 mt-5 max-w-xl">
-              Diagnóstico se faz no chão, com quem executa.
+              Do problema no campo até a ferramenta no ar.
             </h2>
           </Reveal>
           <Reveal delay={0.1}>
             <p className="mt-7 max-w-xl text-base leading-relaxed text-apt-concreto/75">
-              Nenhuma ferramenta nossa saiu de sala de reunião. A gente olha o
-              trabalho sendo feito, com quem preenche o relatório, sobe a ficha
-              e monta a equipe. Mede como está hoje e só então mexe. Sem essa
-              medida, qualquer ganho que a gente contasse depois seria
-              opinião.
+              A gente cuida de todas as etapas. Entende o processo com quem
+              preenche o relatório, sobe a ficha e monta a equipe. Desenha a
+              solução, programa, publica e escreve o manual. No caminho, já
+              trabalhamos com aplicação web, Python, automação de navegador,
+              geração de Excel, PDF e PowerPoint, mapas e síntese de voz.
             </p>
           </Reveal>
           <Reveal delay={0.18}>
             <dl className="mt-10 grid gap-6 border-t border-border pt-8 sm:grid-cols-3">
               {[
-                ["Medimos", "antes e depois"],
-                ["Redesenhamos", "o processo, não o sistema"],
-                ["Transferimos", "com critério escrito"],
+                ["Entendemos", "o processo com quem faz"],
+                ["Construímos", "da tela ao código"],
+                ["Entregamos", "rodando e com manual"],
               ].map(([k, v]) => (
                 <div key={k}>
                   <dt className="apt-label text-[var(--apt-laranja)]">{k}</dt>
