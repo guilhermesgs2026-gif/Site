@@ -140,28 +140,28 @@ export function Cabecalho() {
 const VALORES = [
   {
     n: "01",
-    t: "Transferir, não reter",
-    d: "Uma ferramenta nossa deu certo quando quem usa não precisa mais da gente para operar. Se só funciona com a gente do lado, está mal feita.",
+    t: "Assume o problema",
+    d: "Se a gente viu o retrabalho, o problema passa a ser nosso. Não esperamos alguém mandar resolver.",
   },
   {
     n: "02",
-    t: "Ir onde o trabalho acontece",
-    d: "Diagnóstico se faz no chão, com quem executa, e não em sala de reunião com quem descreve.",
+    t: "Termina o que começa",
+    d: "Ferramenta só conta quando está no ar e sendo usada. Protótipo parado na pasta não entra nesta página.",
   },
   {
     n: "03",
-    t: "Autonomia de quem opera",
-    d: "Quem faz o trabalho é quem melhor sabe melhorá-lo. A gente sabe disso porque é exatamente quem faz o trabalho.",
+    t: "Aprende o que precisar",
+    d: "Quando o problema pediu mapa, voz sintetizada ou automação de navegador, a gente foi aprender. A ferramenta que a gente conhece não limita a solução.",
   },
   {
     n: "04",
-    t: "Medir antes de afirmar",
-    d: "Sem número de antes e de depois, é opinião. A gente prefere não falar do que falar sem medir.",
+    t: "Deixa tudo explicado",
+    d: "Quem usa não pode depender da gente. As ferramentas web saem com manual em PDF e com o Apto dando dica em cada tela.",
   },
   {
     n: "05",
-    t: "Simples que roda",
-    d: "Processo que a equipe mantém vale mais que o processo perfeito que ninguém segue. Por isso as ferramentas saem com manual e com o Apto explicando cada tela.",
+    t: "Fala a verdade sobre o resultado",
+    d: "Sem número de antes e de depois, é opinião. Por isso não tem porcentagem nesta página. E quando partimos do trabalho de outra pessoa, a gente diz.",
   },
 ];
 
@@ -172,7 +172,7 @@ export function Filosofia() {
       tom="fundo"
       ambiente={{ canto: "esquerda-baixo" }}
       rotulo="Ética de trabalho"
-      titulo="Cinco regras que a gente não quebra."
+      titulo="O que dá para esperar de qualquer um de nós."
     >
       <ul className="divide-y divide-border border-y border-border">
         {VALORES.map((v, i) => (
